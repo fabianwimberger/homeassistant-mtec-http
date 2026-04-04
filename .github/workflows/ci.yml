@@ -57,7 +57,7 @@ jobs:
         run: pytest tests/ -v --cov=custom_components/mtec --cov-report=xml
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           file: ./coverage.xml
           fail_ci_if_error: false
