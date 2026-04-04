@@ -145,14 +145,16 @@ class MtecClimate(MtecEntity, ClimateEntity):
         """Return the current room temperature."""
         if self.coordinator.data is None:
             return None
-        return self.coordinator.data.get(self._room_temp_key)
+        value = self.coordinator.data.get(self._room_temp_key)
+        return float(value) if isinstance(value, (int, float)) else None
 
     @property
     def target_temperature(self) -> float | None:
         """Return the target temperature (selected set temp from the pump)."""
         if self.coordinator.data is None:
             return None
-        return self.coordinator.data.get(self._room_set_temp_key)
+        value = self.coordinator.data.get(self._room_set_temp_key)
+        return float(value) if isinstance(value, (int, float)) else None
 
     @property
     def preset_mode(self) -> str | None:

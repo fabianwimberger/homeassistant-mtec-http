@@ -16,7 +16,7 @@ from .entity import MtecEntity
 
 # Sensors whose raw int value should be mapped to a human-readable string
 _ENUM_SENSORS: dict[str, dict[int, str]] = {
-    "heatpump_state": HEATPUMP_STATE_OPTIONS,
+    "heatpump_state": HEATPUMP_STATE_OPTIONS,  # type: ignore[dict-item]
 }
 
 
@@ -56,4 +56,4 @@ class MtecSensor(MtecEntity):
             return None
         if self._enum_map:
             return self._enum_map.get(int(raw), f"Unknown ({raw})")
-        return raw
+        return float(raw) if isinstance(raw, (int, float)) else None

@@ -46,7 +46,8 @@ class MtecNumber(MtecEntity):
         """Return the current value."""
         if self.coordinator.data is None:
             return None
-        return self.coordinator.data.get(self.entity_description.mtec_key)
+        value = self.coordinator.data.get(self.entity_description.mtec_key)
+        return float(value) if isinstance(value, (int, float)) else None
 
     async def async_set_native_value(self, value: float) -> None:
         """Set the value on the heat pump."""

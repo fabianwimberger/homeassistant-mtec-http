@@ -35,7 +35,7 @@ DATA_SCHEMA = vol.Schema(
 )
 
 
-class MtecConfigFlow(ConfigFlow, domain=DOMAIN):
+class MtecConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg]
     """Handle a config flow for M-TEC Heat Pump."""
 
     VERSION = 1

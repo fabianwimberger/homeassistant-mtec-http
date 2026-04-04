@@ -1007,7 +1007,7 @@ SELECT_DESCRIPTIONS: tuple[MtecSelectEntityDescription, ...] = (
         key="system_operating_mode",
         mtec_key="system_operating_mode",
         translation_key="system_operating_mode",
-        options_map=SYSTEM_OPERATING_MODE_OPTIONS,
+        options_map=SYSTEM_OPERATING_MODE_OPTIONS,  # type: ignore[arg-type]
         options=list(SYSTEM_OPERATING_MODE_OPTIONS.values()),
         icon="mdi:cog",
     ),
@@ -1015,7 +1015,7 @@ SELECT_DESCRIPTIONS: tuple[MtecSelectEntityDescription, ...] = (
         key="hot_water_mode",
         mtec_key="hot_water_mode",
         translation_key="hot_water_mode",
-        options_map=HOT_WATER_MODE_OPTIONS,
+        options_map=HOT_WATER_MODE_OPTIONS,  # type: ignore[arg-type]
         options=list(HOT_WATER_MODE_OPTIONS.values()),
         icon="mdi:water-boiler",
     ),
@@ -1023,7 +1023,7 @@ SELECT_DESCRIPTIONS: tuple[MtecSelectEntityDescription, ...] = (
         key="hc0_mode",
         mtec_key="hc0_mode",
         translation_key="hc0_mode",
-        options_map=HEAT_CIRCUIT_MODE_OPTIONS,
+        options_map=HEAT_CIRCUIT_MODE_OPTIONS,  # type: ignore[arg-type]
         options=list(HEAT_CIRCUIT_MODE_OPTIONS.values()),
         icon="mdi:radiator",
     ),
@@ -1031,7 +1031,7 @@ SELECT_DESCRIPTIONS: tuple[MtecSelectEntityDescription, ...] = (
         key="hc1_mode",
         mtec_key="hc1_mode",
         translation_key="hc1_mode",
-        options_map=HEAT_CIRCUIT_MODE_OPTIONS,
+        options_map=HEAT_CIRCUIT_MODE_OPTIONS,  # type: ignore[arg-type]
         options=list(HEAT_CIRCUIT_MODE_OPTIONS.values()),
         icon="mdi:radiator",
     ),
@@ -1039,7 +1039,7 @@ SELECT_DESCRIPTIONS: tuple[MtecSelectEntityDescription, ...] = (
         key="sg_ready_mode",
         mtec_key="sg_ready_mode",
         translation_key="sg_ready_mode",
-        options_map=SG_READY_MODE_OPTIONS,
+        options_map=SG_READY_MODE_OPTIONS,  # type: ignore[arg-type]
         options=list(SG_READY_MODE_OPTIONS.values()),
         icon="mdi:transmission-tower",
     ),

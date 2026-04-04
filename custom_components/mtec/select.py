@@ -50,7 +50,7 @@ class MtecSelect(MtecEntity):
         raw = self.coordinator.data.get(self.entity_description.mtec_key)
         if raw is None:
             return None
-        return self.entity_description.options_map.get(int(raw))
+        return self.entity_description.options_map.get(int(raw), None)
 
     async def async_select_option(self, option: str) -> None:
         """Set the operating mode."""
