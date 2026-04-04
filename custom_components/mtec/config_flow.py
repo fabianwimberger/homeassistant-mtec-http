@@ -15,7 +15,13 @@ from homeassistant.config_entries import (
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import MtecApiClient
-from .const import CONF_HOST, CONF_SCAN_INTERVAL, DEFAULT_HOST, DEFAULT_SCAN_INTERVAL, DOMAIN
+from .const import (
+    CONF_HOST,
+    CONF_SCAN_INTERVAL,
+    DEFAULT_HOST,
+    DEFAULT_SCAN_INTERVAL,
+    DOMAIN,
+)
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -8,7 +8,7 @@ pytest-cov>=5.0.0
 
 # Home Assistant testing framework
 # Pin to specific version matching HA core
-pytest-homeassistant-custom-component==0.13.322
+pytest-homeassistant-custom-component==0.13.316
 
 # HA core (for type checking and imports)
 homeassistant>=2025.1.0

@@ -8,7 +8,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .api import MtecApiError
-from .const import DOMAIN, SELECT_DESCRIPTIONS, MtecSelectEntityDescription
+from .const import SELECT_DESCRIPTIONS, MtecSelectEntityDescription
 from .coordinator import MtecDataCoordinator
 from .entity import MtecEntity
 

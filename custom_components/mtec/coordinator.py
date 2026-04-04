@@ -8,7 +8,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import MtecApiClient, MtecApiError
-from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
