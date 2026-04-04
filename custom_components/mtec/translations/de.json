@@ -1,0 +1,123 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "M-TEC Warmepumpe",
+        "description": "IP-Adresse oder Hostname der M-TEC Warmepumpe eingeben.",
+        "data": {
+          "host": "Host",
+          "scan_interval": "Abfrageintervall (Sekunden)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Verbindung zur Warmepumpe nicht moeglich. Bitte IP-Adresse pruefen."
+    },
+    "abort": {
+      "already_configured": "Diese Warmepumpe ist bereits konfiguriert.",
+      "reconfigure_successful": "Host erfolgreich aktualisiert."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "M-TEC Optionen",
+        "data": {
+          "scan_interval": "Abfrageintervall (Sekunden)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "buffer_heat_request": { "name": "Pufferspeicher Waermeanforderung" },
+      "buffer_cool_request": { "name": "Pufferspeicher Kuehlanforderung" },
+      "hot_water_heat_request": { "name": "Warmwasser Waermeanforderung" },
+      "hot_water_pump": { "name": "Warmwasserpumpe" },
+      "hot_water_circ_pump": { "name": "Warmwasser Zirkulationspumpe" },
+      "hc0_pump": { "name": "HK0 Pumpe" },
+      "hc1_pump": { "name": "HK1 Pumpe" },
+      "pv_excess_energy": { "name": "PV Ueberschussenergie" },
+      "ext_heat_source": { "name": "Externe Waermequelle" },
+      "screed_drying_active": { "name": "Estrichtrocknung" }
+    },
+    "climate": {
+      "hc0_climate": { "name": "HK0 Heizkreis" },
+      "hc1_climate": { "name": "HK1 Heizkreis" }
+    },
+    "sensor": {
+      "outdoor_temp": { "name": "Aussentemperatur" },
+      "heating_power": { "name": "Heizleistung" },
+      "electrical_power": { "name": "Elektrische Leistung" },
+      "heatpump_state": { "name": "Waermepumpe Status" },
+      "temp_vaporizer": { "name": "Verdampfertemperatur" },
+      "temp_condenser": { "name": "Kondensatortemperatur" },
+      "temp_heat_flow": { "name": "Vorlauftemperatur" },
+      "temp_heat_return": { "name": "Ruecklauftemperatur" },
+      "temp_source_in": { "name": "Quelleneintrittstemperatur" },
+      "temp_source_out": { "name": "Quellenaustrittstemperatur" },
+      "circ_pump": { "name": "Umwaelzpumpe" },
+      "compressor": { "name": "Kompressor" },
+      "fan": { "name": "Luefter" },
+      "mass_flow": { "name": "Massenstrom" },
+      "operating_hours": { "name": "Betriebsstunden" },
+      "total_heating_energy": { "name": "Gesamte Heizenergie" },
+      "total_electrical_energy": { "name": "Gesamte elektrische Energie" },
+      "temp_compressor_in": { "name": "Kompressor Eintrittstemperatur" },
+      "temp_compressor_out": { "name": "Kompressor Austrittstemperatur" },
+      "superheat_actual": { "name": "Ueberhitzung Ist" },
+      "superheat_set": { "name": "Ueberhitzung Soll" },
+      "low_pressure": { "name": "Niederdruck" },
+      "high_pressure": { "name": "Hochdruck" },
+      "cop": { "name": "COP" },
+      "buffer_top_temp": { "name": "Pufferspeicher oben" },
+      "buffer_mid_temp": { "name": "Pufferspeicher mitte" },
+      "buffer_set_temp": { "name": "Pufferspeicher Solltemperatur" },
+      "buffer_switch_valve": { "name": "Pufferspeicher Umschaltventil" },
+      "hot_water_top_temp": { "name": "Warmwasser oben" },
+      "hot_water_circ_temp": { "name": "Warmwasser Zirkulationstemperatur" },
+      "hc0_room_temp": { "name": "HK0 Raumtemperatur" },
+      "hc0_room_set_temp": { "name": "HK0 Raum-Solltemperatur" },
+      "hc0_flow_actual_temp": { "name": "HK0 Vorlauftemperatur" },
+      "hc0_flow_set_temp": { "name": "HK0 Vorlauf-Solltemperatur" },
+      "hc0_return_temp": { "name": "HK0 Ruecklauftemperatur" },
+      "hc0_heat_request": { "name": "HK0 Waermeanforderung" },
+      "hc0_cool_request": { "name": "HK0 Kuehlanforderung" },
+      "hc0_humidity": { "name": "HK0 Raumfeuchtigkeit" },
+      "hc0_mixer": { "name": "HK0 Mischerstellung" },
+      "hc1_room_temp": { "name": "HK1 Raumtemperatur" },
+      "hc1_room_set_temp": { "name": "HK1 Raum-Solltemperatur" },
+      "hc1_flow_actual_temp": { "name": "HK1 Vorlauftemperatur" },
+      "hc1_flow_set_temp": { "name": "HK1 Vorlauf-Solltemperatur" },
+      "hc1_return_temp": { "name": "HK1 Ruecklauftemperatur" },
+      "hc1_heat_request": { "name": "HK1 Waermeanforderung" },
+      "hc1_cool_request": { "name": "HK1 Kuehlanforderung" },
+      "hc1_humidity": { "name": "HK1 Raumfeuchtigkeit" },
+      "hc1_mixer": { "name": "HK1 Mischerstellung" },
+      "solar_collector_temp": { "name": "Solarkollektortemperatur" },
+      "pv_meter_power": { "name": "PV Zaehlerleistung" },
+      "ext_heat_source_request": { "name": "Externe Waermequelle Anforderung" },
+      "alarm_id_0": { "name": "Alarm 1" },
+      "alarm_id_1": { "name": "Alarm 2" },
+      "alarm_id_2": { "name": "Alarm 3" },
+      "alarm_id_3": { "name": "Alarm 4" },
+      "alarm_id_4": { "name": "Alarm 5" }
+    },
+    "number": {
+      "hot_water_target_temp_set": { "name": "Warmwasser Solltemperatur" },
+      "hc0_day_temp": { "name": "HK0 Tagtemperatur" },
+      "hc0_night_temp": { "name": "HK0 Nachttemperatur" },
+      "hc0_offset_temp": { "name": "HK0 Offset-Temperatur" },
+      "hc1_day_temp": { "name": "HK1 Tagtemperatur" },
+      "hc1_night_temp": { "name": "HK1 Nachttemperatur" },
+      "hc1_offset_temp": { "name": "HK1 Offset-Temperatur" }
+    },
+    "select": {
+      "system_operating_mode": { "name": "Betriebsmodus" },
+      "hot_water_mode": { "name": "Warmwasser-Modus" },
+      "hc0_mode": { "name": "HK0 Betriebsmodus" },
+      "hc1_mode": { "name": "HK1 Betriebsmodus" },
+      "sg_ready_mode": { "name": "SG Ready Modus" }
+    }
+  }
+}
