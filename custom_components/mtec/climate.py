@@ -15,7 +15,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .api import MtecApiError
-from .const import HEAT_CIRCUIT_MODE_OPTIONS, HeatCircuitMode
+from .const import HeatCircuitMode
 from .coordinator import MtecDataCoordinator
 from .entity import MtecEntity
 

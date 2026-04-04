@@ -13,7 +13,7 @@ from .const import (
     CONF_SCAN_INTERVAL,
     DEFAULT_SCAN_INTERVAL,
     DEVICE_INFO_SIGNALS,
-    DOMAIN,
+    DOMAIN as DOMAIN,
     PLATFORMS,
 )
 from .coordinator import MtecDataCoordinator

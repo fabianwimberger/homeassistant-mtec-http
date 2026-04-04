@@ -147,10 +147,7 @@ class MtecApiClient:
             raise MtecApiError(f"Unknown signal key: {key}")
 
         conv = CONVERSIONS.get(key)
-        if conv and conv.__name__ == "conv_int":
-            value_str = str(int(value))
-        else:
-            value_str = str(value)
+        value_str = str(int(value)) if conv and conv.__name__ == "conv_int" else str(value)
 
         request_body = [{"name": signal_name, "value": value_str}]
 
