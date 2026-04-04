@@ -1,4 +1,5 @@
 """M-TEC Heat Pump HTTP API client."""
+
 from __future__ import annotations
 
 import logging

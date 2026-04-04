@@ -1,4 +1,5 @@
 """M-TEC Heat Pump integration."""
+
 from __future__ import annotations
 
 import logging
@@ -13,8 +14,10 @@ from .const import (
     CONF_SCAN_INTERVAL,
     DEFAULT_SCAN_INTERVAL,
     DEVICE_INFO_SIGNALS,
-    DOMAIN as DOMAIN,
     PLATFORMS,
+)
+from .const import (
+    DOMAIN as DOMAIN,
 )
 from .coordinator import MtecDataCoordinator
 

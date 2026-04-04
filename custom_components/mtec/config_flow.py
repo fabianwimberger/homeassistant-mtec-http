@@ -1,11 +1,11 @@
 """Config flow for M-TEC Heat Pump."""
+
 from __future__ import annotations
 
 import logging
 from typing import Any
 
 import voluptuous as vol
-
 from homeassistant.config_entries import (
     ConfigEntry,
     ConfigFlow,
@@ -45,9 +45,7 @@ class MtecConfigFlow(ConfigFlow, domain=DOMAIN):
         """Get the options flow handler."""
         return MtecOptionsFlow()
 
-    async def async_step_user(
-        self, user_input: dict[str, Any] | None = None
-    ) -> ConfigFlowResult:
+    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Handle the initial step."""
         errors: dict[str, str] = {}
 
@@ -100,9 +98,7 @@ class MtecConfigFlow(ConfigFlow, domain=DOMAIN):
         current_host = self._get_reconfigure_entry().data.get(CONF_HOST, DEFAULT_HOST)
         return self.async_show_form(
             step_id="reconfigure",
-            data_schema=vol.Schema(
-                {vol.Required(CONF_HOST, default=current_host): str}
-            ),
+            data_schema=vol.Schema({vol.Required(CONF_HOST, default=current_host): str}),
             errors=errors,
         )
 
@@ -110,9 +106,7 @@ class MtecConfigFlow(ConfigFlow, domain=DOMAIN):
 class MtecOptionsFlow(OptionsFlow):
     """Handle options for M-TEC."""
 
-    async def async_step_init(
-        self, user_input: dict[str, Any] | None = None
-    ) -> ConfigFlowResult:
+    async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Manage the scan interval option."""
         if user_input is not None:
             return self.async_create_entry(data=user_input)
@@ -125,9 +119,9 @@ class MtecOptionsFlow(OptionsFlow):
             step_id="init",
             data_schema=vol.Schema(
                 {
-                    vol.Optional(
-                        CONF_SCAN_INTERVAL, default=current_interval
-                    ): vol.All(int, vol.Range(min=5, max=300)),
+                    vol.Optional(CONF_SCAN_INTERVAL, default=current_interval): vol.All(
+                        int, vol.Range(min=5, max=300)
+                    ),
                 }
             ),
         )

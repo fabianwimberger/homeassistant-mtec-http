@@ -1,4 +1,5 @@
 """Select platform for M-TEC Heat Pump."""
+
 from __future__ import annotations
 
 import logging
@@ -22,9 +23,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up M-TEC select entities."""
     coordinator: MtecDataCoordinator = entry.runtime_data
-    async_add_entities(
-        MtecSelect(coordinator, desc) for desc in SELECT_DESCRIPTIONS
-    )
+    async_add_entities(MtecSelect(coordinator, desc) for desc in SELECT_DESCRIPTIONS)
 
 
 class MtecSelect(MtecEntity):

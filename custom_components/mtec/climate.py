@@ -1,4 +1,5 @@
 """Climate platform for M-TEC Heat Pump."""
+
 from __future__ import annotations
 
 import logging
@@ -88,9 +89,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up M-TEC climate entities."""
     coordinator: MtecDataCoordinator = entry.runtime_data
-    async_add_entities(
-        MtecClimate(coordinator, circuit) for circuit in CLIMATE_CIRCUITS
-    )
+    async_add_entities(MtecClimate(coordinator, circuit) for circuit in CLIMATE_CIRCUITS)
 
 
 class MtecClimate(MtecEntity, ClimateEntity):
@@ -121,9 +120,7 @@ class MtecClimate(MtecEntity, ClimateEntity):
         self._night_temp_key = circuit["night_temp_key"]
         self._mtec_key = circuit["mode_key"]
         self._attr_translation_key = circuit["translation_key"]
-        self._attr_unique_id = (
-            f"{coordinator.client.host}_hc{self._circuit}_climate"
-        )
+        self._attr_unique_id = f"{coordinator.client.host}_hc{self._circuit}_climate"
         self._attr_icon = "mdi:radiator"
 
     def _raw_mode(self) -> int | None:
@@ -172,9 +169,7 @@ class MtecClimate(MtecEntity, ClimateEntity):
             _LOGGER.error("Unsupported HVAC mode: %s", hvac_mode)
             return
         try:
-            await self.coordinator.client.async_write_value(
-                self._mode_key, float(mtec_mode)
-            )
+            await self.coordinator.client.async_write_value(self._mode_key, float(mtec_mode))
         except MtecApiError as err:
             _LOGGER.error("Failed to set HC%d mode: %s", self._circuit, err)
             return
@@ -209,9 +204,7 @@ class MtecClimate(MtecEntity, ClimateEntity):
             _LOGGER.error("Unknown preset: %s", preset_mode)
             return
         try:
-            await self.coordinator.client.async_write_value(
-                self._mode_key, float(mtec_mode)
-            )
+            await self.coordinator.client.async_write_value(self._mode_key, float(mtec_mode))
         except MtecApiError as err:
             _LOGGER.error("Failed to set HC%d preset: %s", self._circuit, err)
             return

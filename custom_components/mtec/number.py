@@ -1,4 +1,5 @@
 """Number platform for M-TEC Heat Pump."""
+
 from __future__ import annotations
 
 import logging
@@ -22,9 +23,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up M-TEC number entities."""
     coordinator: MtecDataCoordinator = entry.runtime_data
-    async_add_entities(
-        MtecNumber(coordinator, desc) for desc in NUMBER_DESCRIPTIONS
-    )
+    async_add_entities(MtecNumber(coordinator, desc) for desc in NUMBER_DESCRIPTIONS)
 
 
 class MtecNumber(MtecEntity):
@@ -52,9 +51,7 @@ class MtecNumber(MtecEntity):
     async def async_set_native_value(self, value: float) -> None:
         """Set the value on the heat pump."""
         try:
-            await self.coordinator.client.async_write_value(
-                self.entity_description.mtec_key, value
-            )
+            await self.coordinator.client.async_write_value(self.entity_description.mtec_key, value)
         except MtecApiError as err:
             _LOGGER.error("Failed to set %s: %s", self.entity_description.key, err)
             return

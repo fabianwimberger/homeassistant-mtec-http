@@ -1,4 +1,5 @@
 """Sensor platform for M-TEC Heat Pump."""
+
 from __future__ import annotations
 
 from homeassistant.config_entries import ConfigEntry
@@ -26,9 +27,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up M-TEC sensors."""
     coordinator: MtecDataCoordinator = entry.runtime_data
-    async_add_entities(
-        MtecSensor(coordinator, desc) for desc in SENSOR_DESCRIPTIONS
-    )
+    async_add_entities(MtecSensor(coordinator, desc) for desc in SENSOR_DESCRIPTIONS)
 
 
 class MtecSensor(MtecEntity):

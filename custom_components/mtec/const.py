@@ -1,4 +1,5 @@
 """Constants for the M-TEC Heat Pump integration."""
+
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -140,6 +141,7 @@ SIGNAL_MAP_REV = {v: k for k, v in SIGNAL_MAP.items()}
 
 # --- Value conversion functions ---
 
+
 def conv_temp1(v: float) -> float:
     """Round temperature to 1 decimal."""
     return round(v, 1)
@@ -261,11 +263,13 @@ CONVERSIONS: dict[str, Callable[[float], float | int]] = {
 
 # --- Operating mode enums (from official Modbus documentation) ---
 
+
 class SystemOperatingMode(IntEnum):
     """System operating mode.
 
     From Modbus doc: Setup (-1), Standby (0), Summer (1), AutoHeat (2), AutoCool (3), FullAuto (4)
     """
+
     STANDBY = 0
     SUMMER = 1
     AUTO_HEAT = 2
@@ -278,6 +282,7 @@ class HotWaterMode(IntEnum):
 
     From Modbus doc: 0=Off, 1=Time program, 2=Continuous, 3=Forced load
     """
+
     OFF = 0
     TIME_PROGRAM = 1
     CONTINUOUS = 2
@@ -289,6 +294,7 @@ class HeatCircuitMode(IntEnum):
 
     From Modbus doc: 0=Standby, 1=Timer, 2=Day, 3=Night, 4=Vacation, 5=Party, 8=Extern
     """
+
     STANDBY = 0
     TIMER = 1
     DAY = 2
@@ -304,6 +310,7 @@ class HeatpumpState(IntEnum):
     From Modbus doc: 0=Standby, 1=PreRun, 2=AutomaticHeat, 3=Defrost, 4=AutomaticCool,
                      5=PostRun, 7=SafetyShutdown, 8=Error
     """
+
     STANDBY = 0
     PRE_RUN = 1
     AUTOMATIC_HEAT = 2
@@ -316,6 +323,7 @@ class HeatpumpState(IntEnum):
 
 class SGReadyMode(IntEnum):
     """SG Ready operating mode."""
+
     MODE_1 = 1  # Blocking
     MODE_2 = 2  # Normal
     MODE_3 = 3  # Recommendation to increase
@@ -368,27 +376,32 @@ SG_READY_MODE_OPTIONS = {
 
 # --- Entity descriptions ---
 
+
 @dataclass(frozen=True)
 class MtecSensorEntityDescription(SensorEntityDescription):
     """Sensor entity description for M-TEC."""
+
     mtec_key: str = ""
 
 
 @dataclass(frozen=True)
 class MtecBinarySensorEntityDescription(BinarySensorEntityDescription):
     """Binary sensor entity description for M-TEC."""
+
     mtec_key: str = ""
 
 
 @dataclass(frozen=True)
 class MtecNumberEntityDescription(NumberEntityDescription):
     """Number entity description for M-TEC."""
+
     mtec_key: str = ""
 
 
 @dataclass(frozen=True)
 class MtecSelectEntityDescription(SelectEntityDescription):
     """Select entity description for M-TEC."""
+
     mtec_key: str = ""
     options_map: dict[int, str] = field(default_factory=dict)
 

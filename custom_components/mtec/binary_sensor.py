@@ -1,4 +1,5 @@
 """Binary sensor platform for M-TEC Heat Pump."""
+
 from __future__ import annotations
 
 from homeassistant.components.binary_sensor import BinarySensorEntity
@@ -18,9 +19,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up M-TEC binary sensors."""
     coordinator: MtecDataCoordinator = entry.runtime_data
-    async_add_entities(
-        MtecBinarySensor(coordinator, desc) for desc in BINARY_SENSOR_DESCRIPTIONS
-    )
+    async_add_entities(MtecBinarySensor(coordinator, desc) for desc in BINARY_SENSOR_DESCRIPTIONS)
 
 
 class MtecBinarySensor(MtecEntity, BinarySensorEntity):
