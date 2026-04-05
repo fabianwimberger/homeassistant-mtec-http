@@ -18,7 +18,7 @@ from custom_components.mtec.const import (
 )
 
 
-async def test_config_flow_init(hass: HomeAssistant):
+async def test_config_flow_init(hass: HomeAssistant) -> None:
     """Test the initial form is shown."""
 
     result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": SOURCE_USER})
@@ -28,7 +28,7 @@ async def test_config_flow_init(hass: HomeAssistant):
     assert result["errors"] == {}
 
 
-async def test_config_flow_success(hass: HomeAssistant):
+async def test_config_flow_success(hass: HomeAssistant) -> None:
     """Test successful config flow."""
     with patch(
         "custom_components.mtec.config_flow.MtecApiClient.async_validate_connection",
@@ -49,7 +49,7 @@ async def test_config_flow_success(hass: HomeAssistant):
     assert result["data"][CONF_SCAN_INTERVAL] == 30
 
 
-async def test_config_flow_cannot_connect(hass: HomeAssistant):
+async def test_config_flow_cannot_connect(hass: HomeAssistant) -> None:
     """Test config flow with connection error."""
     with patch(
         "custom_components.mtec.config_flow.MtecApiClient.async_validate_connection",
@@ -68,7 +68,7 @@ async def test_config_flow_cannot_connect(hass: HomeAssistant):
     assert result["errors"]["base"] == "cannot_connect"
 
 
-async def test_config_flow_duplicate(hass: HomeAssistant):
+async def test_config_flow_duplicate(hass: HomeAssistant) -> None:
     """Test config flow with duplicate entry."""
     # Create an existing entry first
 
@@ -107,7 +107,7 @@ async def test_config_flow_duplicate(hass: HomeAssistant):
         assert result["reason"] == "already_configured"
 
 
-async def test_options_flow(hass: HomeAssistant):
+async def test_options_flow(hass: HomeAssistant) -> None:
     """Test options flow."""
     # First create an entry
     with (
@@ -156,7 +156,7 @@ async def test_options_flow(hass: HomeAssistant):
     assert result["data"][CONF_SCAN_INTERVAL] == 60
 
 
-async def test_reconfigure_flow(hass: HomeAssistant):
+async def test_reconfigure_flow(hass: HomeAssistant) -> None:
     """Test reconfigure flow for changing host."""
     # First create an entry
     with (
@@ -219,7 +219,7 @@ async def test_reconfigure_flow(hass: HomeAssistant):
     assert result["reason"] == "reconfigure_successful"
 
 
-async def test_reconfigure_flow_cannot_connect(hass: HomeAssistant):
+async def test_reconfigure_flow_cannot_connect(hass: HomeAssistant) -> None:
     """Test reconfigure flow with connection error."""
     # First create an entry
     with (
@@ -281,7 +281,7 @@ async def test_reconfigure_flow_cannot_connect(hass: HomeAssistant):
     assert result["errors"]["base"] == "cannot_connect"
 
 
-async def test_default_values_in_form(hass: HomeAssistant):
+async def test_default_values_in_form(hass: HomeAssistant) -> None:
     """Test that default values are shown in the form."""
     from custom_components.mtec.config_flow import DATA_SCHEMA
 

@@ -5,11 +5,13 @@ from __future__ import annotations
 from datetime import timedelta
 from unittest.mock import MagicMock
 
+from homeassistant.core import HomeAssistant
+
 from custom_components.mtec.const import CONF_HOST
 from custom_components.mtec.diagnostics import async_get_config_entry_diagnostics
 
 
-async def test_diagnostics(hass):
+async def test_diagnostics(hass: HomeAssistant) -> None:
     """Test diagnostics output."""
     entry = MagicMock()
     entry.data = {CONF_HOST: "192.168.1.100"}
@@ -37,7 +39,7 @@ async def test_diagnostics(hass):
     assert isinstance(result["signals"]["unavailable"], list)
 
 
-async def test_diagnostics_no_data(hass):
+async def test_diagnostics_no_data(hass: HomeAssistant) -> None:
     """Test diagnostics when no data available."""
     entry = MagicMock()
     entry.data = {CONF_HOST: "192.168.1.100"}
@@ -60,7 +62,7 @@ async def test_diagnostics_no_data(hass):
     assert len(result["signals"]["unavailable"]) == result["signals"]["total"]
 
 
-async def test_diagnostics_no_interval(hass):
+async def test_diagnostics_no_interval(hass: HomeAssistant) -> None:
     """Test diagnostics when update_interval is None."""
     entry = MagicMock()
     entry.data = {CONF_HOST: "192.168.1.100"}

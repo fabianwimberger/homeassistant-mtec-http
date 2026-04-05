@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from typing import Any
 from unittest.mock import patch
 
 from homeassistant.config_entries import ConfigEntryState
@@ -10,7 +11,7 @@ from homeassistant.core import HomeAssistant
 from custom_components.mtec.const import CONF_HOST, CONF_SCAN_INTERVAL, DOMAIN
 
 
-async def test_setup_entry(hass: HomeAssistant):
+async def test_setup_entry(hass: HomeAssistant) -> None:
     """Test successful setup of a config entry."""
     entry = _create_entry(hass)
 
@@ -22,7 +23,7 @@ async def test_setup_entry(hass: HomeAssistant):
     assert entry.runtime_data is not None
 
 
-async def test_unload_entry(hass: HomeAssistant):
+async def test_unload_entry(hass: HomeAssistant) -> None:
     """Test unloading a config entry."""
     entry = _create_entry(hass)
 
@@ -38,7 +39,7 @@ async def test_unload_entry(hass: HomeAssistant):
     assert entry.state is ConfigEntryState.NOT_LOADED
 
 
-async def test_setup_entry_connection_failure(hass: HomeAssistant):
+async def test_setup_entry_connection_failure(hass: HomeAssistant) -> None:
     """Test setup failure when probing fails."""
     entry = _create_entry(hass)
 
@@ -52,7 +53,7 @@ async def test_setup_entry_connection_failure(hass: HomeAssistant):
     assert entry.state is ConfigEntryState.SETUP_ERROR
 
 
-def _create_entry(hass: HomeAssistant):
+def _create_entry(hass: HomeAssistant) -> Any:
     """Create and add a config entry using MockConfigEntry."""
     from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -66,7 +67,7 @@ def _create_entry(hass: HomeAssistant):
     return entry
 
 
-def _mock_setup():
+def _mock_setup() -> _CombinedPatches:
     """Return a context manager that mocks all external calls during setup."""
     return _CombinedPatches(
         patch(
@@ -87,12 +88,12 @@ def _mock_setup():
 class _CombinedPatches:  # noqa: N801
     """Combine multiple context managers."""
 
-    def __init__(self, *patches):
+    def __init__(self, *patches: Any) -> None:
         self._patches = patches
 
-    def __enter__(self):
+    def __enter__(self) -> list[Any]:
         return [p.__enter__() for p in self._patches]
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         for p in reversed(self._patches):
             p.__exit__(*args)

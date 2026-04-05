@@ -2,19 +2,22 @@
 
 from __future__ import annotations
 
+from collections.abc import Generator
+
+import httpx
 import pytest
 import respx
 from homeassistant.core import HomeAssistant
 from httpx import Response
 
 
-def pytest_configure(config):
+def pytest_configure(config: pytest.Config) -> None:
     """Configure pytest."""
     config.addinivalue_line("markers", "asyncio: mark test as async")
 
 
 @pytest.fixture(autouse=True)
-def auto_enable_custom_integrations(enable_custom_integrations):
+def auto_enable_custom_integrations(enable_custom_integrations: None) -> Generator[None]:
     """Enable custom integrations in Home Assistant."""
     yield
 
@@ -26,11 +29,11 @@ async def hass(hass: HomeAssistant) -> HomeAssistant:
 
 
 @pytest.fixture
-def mock_api_respx():
+def mock_api_respx() -> Generator[respx.MockRouter]:
     """Create a mock M-TEC API using respx."""
     with respx.mock(assert_all_mocked=False) as rsps:
         # Default handler for read requests
-        def read_handler(request):
+        def read_handler(request: httpx.Request) -> Response:
             import json
 
             body = json.loads(request.content)
@@ -60,7 +63,7 @@ def mock_api_respx():
             return Response(200, json=response)
 
         # Default handler for write requests
-        def write_handler(request):
+        def write_handler(request: httpx.Request) -> Response:
             return Response(200, json=[{"success": True}])
 
         # Register routes
@@ -70,7 +73,7 @@ def mock_api_respx():
 
 
 @pytest.fixture
-def mock_api_respx_with_missing_signals():
+def mock_api_respx_with_missing_signals() -> Generator[respx.MockRouter]:
     """Create a mock API that simulates missing signals."""
     available_signals = {
         "APPL.CtrlAppl.sParam.outdoorTemp.values.actValue",
@@ -81,7 +84,7 @@ def mock_api_respx_with_missing_signals():
 
     with respx.mock(assert_all_mocked=False) as rsps:
 
-        def handler(request):
+        def handler(request: httpx.Request) -> Response:
             import json
 
             body = json.loads(request.content)
@@ -110,7 +113,7 @@ def mock_api_respx_with_missing_signals():
 
 
 @pytest.fixture
-def coordinator_data():
+def coordinator_data() -> dict[str, float | int]:
     """Return sample coordinator data."""
     return {
         "outdoor_temp": 15.5,

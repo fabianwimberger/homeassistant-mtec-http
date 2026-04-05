@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
 from custom_components.mtec.api import MtecApiError
@@ -9,7 +10,7 @@ from custom_components.mtec.const import SELECT_DESCRIPTIONS
 from custom_components.mtec.select import MtecSelect
 
 
-def test_select_current_option(coordinator_data):
+def test_select_current_option(coordinator_data: dict[str, Any]) -> None:
     """Test select current option."""
     coordinator = MagicMock()
     coordinator.data = coordinator_data
@@ -23,7 +24,7 @@ def test_select_current_option(coordinator_data):
     assert select.current_option == "Auto Heat"
 
 
-def test_select_current_option_none(coordinator_data):
+def test_select_current_option_none(coordinator_data: dict[str, Any]) -> None:
     """Test select when data is None."""
     coordinator = MagicMock()
     coordinator.data = None
@@ -36,7 +37,7 @@ def test_select_current_option_none(coordinator_data):
     assert select.current_option is None
 
 
-def test_select_options(coordinator_data):
+def test_select_options(coordinator_data: dict[str, Any]) -> None:
     """Test select available options."""
     coordinator = MagicMock()
     coordinator.data = coordinator_data
@@ -51,7 +52,7 @@ def test_select_options(coordinator_data):
     assert "Full Auto" in select.options
 
 
-def test_select_unique_id(coordinator_data):
+def test_select_unique_id(coordinator_data: dict[str, Any]) -> None:
     """Test select unique ID."""
     coordinator = MagicMock()
     coordinator.data = coordinator_data
@@ -64,7 +65,7 @@ def test_select_unique_id(coordinator_data):
     assert select.unique_id == "192.168.1.100_hc0_mode_select"
 
 
-async def test_select_option(coordinator_data):
+async def test_select_option(coordinator_data: dict[str, Any]) -> None:
     """Test selecting an option."""
     coordinator = MagicMock()
     coordinator.data = coordinator_data
@@ -83,7 +84,7 @@ async def test_select_option(coordinator_data):
     coordinator.async_request_refresh.assert_called_once()
 
 
-async def test_select_option_unknown(coordinator_data, caplog):
+async def test_select_option_unknown(coordinator_data: dict[str, Any], caplog: Any) -> None:
     """Test selecting an unknown option."""
     coordinator = MagicMock()
     coordinator.data = coordinator_data
@@ -100,7 +101,7 @@ async def test_select_option_unknown(coordinator_data, caplog):
     coordinator.async_request_refresh.assert_not_called()
 
 
-async def test_select_option_api_error(coordinator_data, caplog):
+async def test_select_option_api_error(coordinator_data: dict[str, Any], caplog: Any) -> None:
     """Test selecting option with API error."""
     coordinator = MagicMock()
     coordinator.data = coordinator_data
@@ -118,7 +119,7 @@ async def test_select_option_api_error(coordinator_data, caplog):
     coordinator.async_request_refresh.assert_not_called()
 
 
-def test_select_hot_water_mode(coordinator_data):
+def test_select_hot_water_mode(coordinator_data: dict[str, Any]) -> None:
     """Test hot water mode select."""
     coordinator = MagicMock()
     coordinator.data = coordinator_data
@@ -134,7 +135,7 @@ def test_select_hot_water_mode(coordinator_data):
     assert "Continuous" in select.options
 
 
-def test_select_sg_ready_mode(coordinator_data):
+def test_select_sg_ready_mode(coordinator_data: dict[str, Any]) -> None:
     """Test SG Ready mode select."""
     coordinator = MagicMock()
     coordinator.data = coordinator_data

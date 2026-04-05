@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
 from custom_components.mtec.api import MtecApiError
@@ -9,7 +10,7 @@ from custom_components.mtec.const import NUMBER_DESCRIPTIONS
 from custom_components.mtec.number import MtecNumber
 
 
-def test_number_native_value(coordinator_data):
+def test_number_native_value(coordinator_data: dict[str, Any]) -> None:
     """Test number native value."""
     coordinator = MagicMock()
     coordinator.data = coordinator_data
@@ -22,7 +23,7 @@ def test_number_native_value(coordinator_data):
     assert number.native_value == 48.0
 
 
-def test_number_native_value_none(coordinator_data):
+def test_number_native_value_none(coordinator_data: dict[str, Any]) -> None:
     """Test number when data is None."""
     coordinator = MagicMock()
     coordinator.data = None
@@ -35,7 +36,7 @@ def test_number_native_value_none(coordinator_data):
     assert number.native_value is None
 
 
-def test_number_unique_id(coordinator_data):
+def test_number_unique_id(coordinator_data: dict[str, Any]) -> None:
     """Test number unique ID."""
     coordinator = MagicMock()
     coordinator.data = coordinator_data
@@ -48,7 +49,7 @@ def test_number_unique_id(coordinator_data):
     assert number.unique_id == "192.168.1.100_hc0_day_temp_number"
 
 
-def test_number_limits(coordinator_data):
+def test_number_limits(coordinator_data: dict[str, Any]) -> None:
     """Test number min/max/step values."""
     coordinator = MagicMock()
     coordinator.data = coordinator_data
@@ -63,7 +64,7 @@ def test_number_limits(coordinator_data):
     assert number.native_step == 0.5
 
 
-async def test_number_set_value(coordinator_data):
+async def test_number_set_value(coordinator_data: dict[str, Any]) -> None:
     """Test setting number value."""
     coordinator = MagicMock()
     coordinator.data = coordinator_data
@@ -82,7 +83,7 @@ async def test_number_set_value(coordinator_data):
     coordinator.async_request_refresh.assert_called_once()
 
 
-async def test_number_set_value_api_error(coordinator_data, caplog):
+async def test_number_set_value_api_error(coordinator_data: dict[str, Any], caplog: Any) -> None:
     """Test setting number value with API error."""
     coordinator = MagicMock()
     coordinator.data = coordinator_data
@@ -101,7 +102,7 @@ async def test_number_set_value_api_error(coordinator_data, caplog):
     coordinator.async_request_refresh.assert_not_called()
 
 
-def test_number_device_class(coordinator_data):
+def test_number_device_class(coordinator_data: dict[str, Any]) -> None:
     """Test number device class."""
     coordinator = MagicMock()
     coordinator.data = coordinator_data

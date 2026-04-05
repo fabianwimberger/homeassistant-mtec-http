@@ -14,7 +14,7 @@ from custom_components.mtec.const import DOMAIN
 from custom_components.mtec.coordinator import MtecDataCoordinator
 
 
-async def test_coordinator_init(hass: HomeAssistant):
+async def test_coordinator_init(hass: HomeAssistant) -> None:
     """Test coordinator initialization."""
     client = AsyncMock(spec=MtecApiClient)
     coordinator = MtecDataCoordinator(hass, client, 30, {"firmware_version": "1.0.0"})
@@ -25,7 +25,7 @@ async def test_coordinator_init(hass: HomeAssistant):
     assert coordinator.name == DOMAIN
 
 
-async def test_coordinator_init_without_device_info(hass: HomeAssistant):
+async def test_coordinator_init_without_device_info(hass: HomeAssistant) -> None:
     """Test coordinator initialization without device info."""
     client = AsyncMock(spec=MtecApiClient)
     coordinator = MtecDataCoordinator(hass, client, 15)
@@ -33,7 +33,7 @@ async def test_coordinator_init_without_device_info(hass: HomeAssistant):
     assert coordinator.device_info_data == {}
 
 
-async def test_coordinator_update_success(hass: HomeAssistant):
+async def test_coordinator_update_success(hass: HomeAssistant) -> None:
     """Test successful data update."""
     client = AsyncMock(spec=MtecApiClient)
     client.async_read_values.return_value = {
@@ -49,7 +49,7 @@ async def test_coordinator_update_success(hass: HomeAssistant):
     client.async_read_values.assert_called_once()
 
 
-async def test_coordinator_update_failure(hass: HomeAssistant):
+async def test_coordinator_update_failure(hass: HomeAssistant) -> None:
     """Test data update with API error."""
     client = AsyncMock(spec=MtecApiClient)
     client.async_read_values.side_effect = MtecApiError("Connection failed")
@@ -60,7 +60,7 @@ async def test_coordinator_update_failure(hass: HomeAssistant):
         await coordinator._async_update_data()
 
 
-async def test_coordinator_update_empty_data(hass: HomeAssistant):
+async def test_coordinator_update_empty_data(hass: HomeAssistant) -> None:
     """Test data update with empty response."""
     client = AsyncMock(spec=MtecApiClient)
     client.async_read_values.return_value = {}
@@ -71,7 +71,7 @@ async def test_coordinator_update_empty_data(hass: HomeAssistant):
     assert data == {}
 
 
-async def test_coordinator_last_update_success(hass: HomeAssistant):
+async def test_coordinator_last_update_success(hass: HomeAssistant) -> None:
     """Test last_update_success after failed then successful update."""
     client = AsyncMock(spec=MtecApiClient)
 
