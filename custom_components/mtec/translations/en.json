@@ -35,15 +35,9 @@
       "hot_water_heat_request": { "name": "Hot water heat request" },
       "hot_water_pump": { "name": "Hot water pump" },
       "hot_water_circ_pump": { "name": "Hot water circulation pump" },
-      "hc0_pump": { "name": "HC0 pump" },
-      "hc1_pump": { "name": "HC1 pump" },
       "pv_excess_energy": { "name": "PV excess energy" },
       "ext_heat_source": { "name": "External heat source" },
       "screed_drying_active": { "name": "Screed drying" }
-    },
-    "climate": {
-      "hc0_climate": { "name": "HC0 heating circuit" },
-      "hc1_climate": { "name": "HC1 heating circuit" }
     },
     "sensor": {
       "outdoor_temp": { "name": "Outdoor temperature" },
@@ -76,24 +70,6 @@
       "buffer_switch_valve": { "name": "Buffer tank switch valve" },
       "hot_water_top_temp": { "name": "Hot water top temperature" },
       "hot_water_circ_temp": { "name": "Hot water circulation temperature" },
-      "hc0_room_temp": { "name": "HC0 room temperature" },
-      "hc0_room_set_temp": { "name": "HC0 room set temperature" },
-      "hc0_flow_actual_temp": { "name": "HC0 flow temperature" },
-      "hc0_flow_set_temp": { "name": "HC0 flow set temperature" },
-      "hc0_return_temp": { "name": "HC0 return temperature" },
-      "hc0_heat_request": { "name": "HC0 heat request" },
-      "hc0_cool_request": { "name": "HC0 cool request" },
-      "hc0_humidity": { "name": "HC0 room humidity" },
-      "hc0_mixer": { "name": "HC0 mixer position" },
-      "hc1_room_temp": { "name": "HC1 room temperature" },
-      "hc1_room_set_temp": { "name": "HC1 room set temperature" },
-      "hc1_flow_actual_temp": { "name": "HC1 flow temperature" },
-      "hc1_flow_set_temp": { "name": "HC1 flow set temperature" },
-      "hc1_return_temp": { "name": "HC1 return temperature" },
-      "hc1_heat_request": { "name": "HC1 heat request" },
-      "hc1_cool_request": { "name": "HC1 cool request" },
-      "hc1_humidity": { "name": "HC1 room humidity" },
-      "hc1_mixer": { "name": "HC1 mixer position" },
       "solar_collector_temp": { "name": "Solar collector temperature" },
       "pv_meter_power": { "name": "PV meter power" },
       "ext_heat_source_request": { "name": "External heat source request" },
@@ -104,19 +80,11 @@
       "alarm_id_4": { "name": "Alarm 5" }
     },
     "number": {
-      "hot_water_target_temp_set": { "name": "Hot water target temperature" },
-      "hc0_day_temp": { "name": "HC0 day temperature" },
-      "hc0_night_temp": { "name": "HC0 night temperature" },
-      "hc0_offset_temp": { "name": "HC0 offset temperature" },
-      "hc1_day_temp": { "name": "HC1 day temperature" },
-      "hc1_night_temp": { "name": "HC1 night temperature" },
-      "hc1_offset_temp": { "name": "HC1 offset temperature" }
+      "hot_water_target_temp_set": { "name": "Hot water target temperature" }
     },
     "select": {
       "system_operating_mode": { "name": "System operating mode" },
       "hot_water_mode": { "name": "Hot water mode" },
-      "hc0_mode": { "name": "HC0 operating mode" },
-      "hc1_mode": { "name": "HC1 operating mode" },
       "sg_ready_mode": { "name": "SG Ready mode" }
     }
   }

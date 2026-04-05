@@ -87,36 +87,6 @@ SIGNAL_MAP: dict[str, str] = {
     "hot_water_pump": "APPL.CtrlAppl.sParam.hotWaterTank[0].pump.values.setValueB",
     "hot_water_circ_pump": "APPL.CtrlAppl.sParam.hotWaterTank[0].circPump.pump.values.setValueB",
     "hot_water_circ_temp": "APPL.CtrlAppl.sParam.hotWaterTank[0].circTemp.values.actValue",
-    # Heat circuit 0
-    "hc0_mode": "APPL.CtrlAppl.sParam.heatCircuit[0].param.operatingMode",
-    "hc0_room_temp": "APPL.CtrlAppl.sParam.heatCircuit[0].tempRoom.values.actValue",
-    "hc0_room_set_temp": "APPL.CtrlAppl.sParam.heatCircuit[0].values.selectedSetTemp",
-    "hc0_flow_actual_temp": "APPL.CtrlAppl.sParam.heatCircuit[0].heatCircuitMixer.flowTemp.values.actValue",
-    "hc0_flow_set_temp": "APPL.CtrlAppl.sParam.heatCircuit[0].values.flowSetTemp",
-    "hc0_return_temp": "APPL.CtrlAppl.sParam.heatCircuit[0].tempReflux.values.actValue",
-    "hc0_heat_request": "APPL.CtrlAppl.sParam.heatCircuit[0].values.heatRequest",
-    "hc0_cool_request": "APPL.CtrlAppl.sParam.heatCircuit[0].values.coolRequest",
-    "hc0_day_temp": "APPL.CtrlAppl.sParam.heatCircuit[0].param.normalSetTemp",
-    "hc0_night_temp": "APPL.CtrlAppl.sParam.heatCircuit[0].param.reducedSetTemp",
-    "hc0_offset_temp": "APPL.CtrlAppl.sParam.heatCircuit[0].param.offsetRoomTemp",
-    "hc0_humidity": "APPL.CtrlAppl.sParam.heatCircuit[0].humidityRoom.values.actValue",
-    "hc0_mixer": "APPL.CtrlAppl.sParam.heatCircuit[0].heatCircuitMixer.mixer.values.setValueScaled",
-    "hc0_pump": "APPL.CtrlAppl.sParam.heatCircuit[0].pump.values.setValueB",
-    # Heat circuit 1
-    "hc1_mode": "APPL.CtrlAppl.sParam.heatCircuit[1].param.operatingMode",
-    "hc1_room_temp": "APPL.CtrlAppl.sParam.heatCircuit[1].tempRoom.values.actValue",
-    "hc1_room_set_temp": "APPL.CtrlAppl.sParam.heatCircuit[1].values.selectedSetTemp",
-    "hc1_flow_actual_temp": "APPL.CtrlAppl.sParam.heatCircuit[1].heatCircuitMixer.flowTemp.values.actValue",
-    "hc1_flow_set_temp": "APPL.CtrlAppl.sParam.heatCircuit[1].values.flowSetTemp",
-    "hc1_return_temp": "APPL.CtrlAppl.sParam.heatCircuit[1].tempReflux.values.actValue",
-    "hc1_heat_request": "APPL.CtrlAppl.sParam.heatCircuit[1].values.heatRequest",
-    "hc1_cool_request": "APPL.CtrlAppl.sParam.heatCircuit[1].values.coolRequest",
-    "hc1_day_temp": "APPL.CtrlAppl.sParam.heatCircuit[1].param.normalSetTemp",
-    "hc1_night_temp": "APPL.CtrlAppl.sParam.heatCircuit[1].param.reducedSetTemp",
-    "hc1_offset_temp": "APPL.CtrlAppl.sParam.heatCircuit[1].param.offsetRoomTemp",
-    "hc1_humidity": "APPL.CtrlAppl.sParam.heatCircuit[1].humidityRoom.values.actValue",
-    "hc1_mixer": "APPL.CtrlAppl.sParam.heatCircuit[1].heatCircuitMixer.mixer.values.setValueScaled",
-    "hc1_pump": "APPL.CtrlAppl.sParam.heatCircuit[1].pump.values.setValueB",
     # Solar
     "solar_collector_temp": "APPL.CtrlAppl.sParam.solarCircuit[0].collectorTemp.values.actValue",
     # Photovoltaics / Smart Grid
@@ -134,6 +104,29 @@ SIGNAL_MAP: dict[str, str] = {
     "alarm_id_3": "APPL.CtrlAppl.sParam.values.pendingAlarms.ID3",
     "alarm_id_4": "APPL.CtrlAppl.sParam.values.pendingAlarms.ID4",
 }
+
+# Heat circuits 0–7 (generated; probing hides circuits not present on the hardware)
+MAX_HEAT_CIRCUITS = 8
+_HC_SIGNAL_TEMPLATES: dict[str, str] = {
+    "mode": "APPL.CtrlAppl.sParam.heatCircuit[{i}].param.operatingMode",
+    "room_temp": "APPL.CtrlAppl.sParam.heatCircuit[{i}].tempRoom.values.actValue",
+    "room_set_temp": "APPL.CtrlAppl.sParam.heatCircuit[{i}].values.selectedSetTemp",
+    "flow_actual_temp": "APPL.CtrlAppl.sParam.heatCircuit[{i}].heatCircuitMixer.flowTemp.values.actValue",
+    "flow_set_temp": "APPL.CtrlAppl.sParam.heatCircuit[{i}].values.flowSetTemp",
+    "return_temp": "APPL.CtrlAppl.sParam.heatCircuit[{i}].tempReflux.values.actValue",
+    "heat_request": "APPL.CtrlAppl.sParam.heatCircuit[{i}].values.heatRequest",
+    "cool_request": "APPL.CtrlAppl.sParam.heatCircuit[{i}].values.coolRequest",
+    "day_temp": "APPL.CtrlAppl.sParam.heatCircuit[{i}].param.normalSetTemp",
+    "night_temp": "APPL.CtrlAppl.sParam.heatCircuit[{i}].param.reducedSetTemp",
+    "offset_temp": "APPL.CtrlAppl.sParam.heatCircuit[{i}].param.offsetRoomTemp",
+    "humidity": "APPL.CtrlAppl.sParam.heatCircuit[{i}].humidityRoom.values.actValue",
+    "mixer": "APPL.CtrlAppl.sParam.heatCircuit[{i}].heatCircuitMixer.mixer.values.setValueScaled",
+    "pump": "APPL.CtrlAppl.sParam.heatCircuit[{i}].pump.values.setValueB",
+}
+
+for _i in range(MAX_HEAT_CIRCUITS):
+    for _suffix, _tpl in _HC_SIGNAL_TEMPLATES.items():
+        SIGNAL_MAP[f"hc{_i}_{_suffix}"] = _tpl.format(i=_i)
 
 # Reverse map: API signal name -> key
 SIGNAL_MAP_REV = {v: k for k, v in SIGNAL_MAP.items()}
@@ -222,33 +215,6 @@ CONVERSIONS: dict[str, Callable[[float], float | int]] = {
     "hot_water_target_temp": conv_temp1,
     "hot_water_circ_temp": conv_temp1,
     "hot_water_mode": conv_int,
-    "hc0_mode": conv_int,
-    "hc0_room_temp": conv_temp1,
-    "hc0_room_set_temp": conv_temp1,
-    "hc0_flow_actual_temp": conv_temp1,
-    "hc0_flow_set_temp": conv_temp1,
-    "hc0_return_temp": conv_temp1,
-    "hc0_heat_request": conv_int,
-    "hc0_cool_request": conv_int,
-    "hc0_day_temp": conv_temp1,
-    "hc0_night_temp": conv_temp1,
-    "hc0_offset_temp": conv_temp1,
-    "hc0_humidity": conv_int,
-    "hc0_mixer": conv_percent,
-    "hc1_mode": conv_int,
-    "hc1_room_temp": conv_temp1,
-    "hc1_room_set_temp": conv_temp1,
-    "hc1_flow_actual_temp": conv_temp1,
-    "hc1_flow_set_temp": conv_temp1,
-    "hc1_return_temp": conv_temp1,
-    "hc1_heat_request": conv_int,
-    "hc1_cool_request": conv_int,
-    "hc1_day_temp": conv_temp1,
-    "hc1_night_temp": conv_temp1,
-    "hc1_offset_temp": conv_temp1,
-    "hc1_humidity": conv_int,
-    "hc1_mixer": conv_percent,
-    "hc1_pump": conv_int,
     "solar_collector_temp": conv_temp1,
     "pv_meter_power": conv_int,
     "sg_ready_mode": conv_int,
@@ -259,6 +225,28 @@ CONVERSIONS: dict[str, Callable[[float], float | int]] = {
     "alarm_id_3": conv_int,
     "alarm_id_4": conv_int,
 }
+
+# Heat circuit conversions (generated)
+_HC_CONVERSIONS: dict[str, Callable[[float], float | int]] = {
+    "mode": conv_int,
+    "room_temp": conv_temp1,
+    "room_set_temp": conv_temp1,
+    "flow_actual_temp": conv_temp1,
+    "flow_set_temp": conv_temp1,
+    "return_temp": conv_temp1,
+    "heat_request": conv_int,
+    "cool_request": conv_int,
+    "day_temp": conv_temp1,
+    "night_temp": conv_temp1,
+    "offset_temp": conv_temp1,
+    "humidity": conv_int,
+    "mixer": conv_percent,
+    "pump": conv_int,
+}
+
+for _i in range(MAX_HEAT_CIRCUITS):
+    for _suffix, _conv in _HC_CONVERSIONS.items():
+        CONVERSIONS[f"hc{_i}_{_suffix}"] = _conv
 
 
 # --- Operating mode enums (from official Modbus documentation) ---
@@ -646,148 +634,6 @@ SENSOR_DESCRIPTIONS: tuple[MtecSensorEntityDescription, ...] = (
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
     ),
-    # Heat circuit 0 sensors
-    MtecSensorEntityDescription(
-        key="hc0_room_temp",
-        mtec_key="hc0_room_temp",
-        translation_key="hc0_room_temp",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    MtecSensorEntityDescription(
-        key="hc0_room_set_temp",
-        mtec_key="hc0_room_set_temp",
-        translation_key="hc0_room_set_temp",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    MtecSensorEntityDescription(
-        key="hc0_flow_actual_temp",
-        mtec_key="hc0_flow_actual_temp",
-        translation_key="hc0_flow_actual_temp",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    MtecSensorEntityDescription(
-        key="hc0_flow_set_temp",
-        mtec_key="hc0_flow_set_temp",
-        translation_key="hc0_flow_set_temp",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    MtecSensorEntityDescription(
-        key="hc0_return_temp",
-        mtec_key="hc0_return_temp",
-        translation_key="hc0_return_temp",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    MtecSensorEntityDescription(
-        key="hc0_heat_request",
-        mtec_key="hc0_heat_request",
-        translation_key="hc0_heat_request",
-        state_class=SensorStateClass.MEASUREMENT,
-        icon="mdi:fire",
-    ),
-    MtecSensorEntityDescription(
-        key="hc0_cool_request",
-        mtec_key="hc0_cool_request",
-        translation_key="hc0_cool_request",
-        state_class=SensorStateClass.MEASUREMENT,
-        icon="mdi:snowflake",
-    ),
-    MtecSensorEntityDescription(
-        key="hc0_humidity",
-        mtec_key="hc0_humidity",
-        translation_key="hc0_humidity",
-        native_unit_of_measurement=PERCENTAGE,
-        device_class=SensorDeviceClass.HUMIDITY,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    MtecSensorEntityDescription(
-        key="hc0_mixer",
-        mtec_key="hc0_mixer",
-        translation_key="hc0_mixer",
-        native_unit_of_measurement=PERCENTAGE,
-        state_class=SensorStateClass.MEASUREMENT,
-        icon="mdi:valve",
-    ),
-    # Heat circuit 1 sensors
-    MtecSensorEntityDescription(
-        key="hc1_room_temp",
-        mtec_key="hc1_room_temp",
-        translation_key="hc1_room_temp",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    MtecSensorEntityDescription(
-        key="hc1_room_set_temp",
-        mtec_key="hc1_room_set_temp",
-        translation_key="hc1_room_set_temp",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    MtecSensorEntityDescription(
-        key="hc1_flow_actual_temp",
-        mtec_key="hc1_flow_actual_temp",
-        translation_key="hc1_flow_actual_temp",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    MtecSensorEntityDescription(
-        key="hc1_flow_set_temp",
-        mtec_key="hc1_flow_set_temp",
-        translation_key="hc1_flow_set_temp",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    MtecSensorEntityDescription(
-        key="hc1_return_temp",
-        mtec_key="hc1_return_temp",
-        translation_key="hc1_return_temp",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    MtecSensorEntityDescription(
-        key="hc1_heat_request",
-        mtec_key="hc1_heat_request",
-        translation_key="hc1_heat_request",
-        state_class=SensorStateClass.MEASUREMENT,
-        icon="mdi:fire",
-    ),
-    MtecSensorEntityDescription(
-        key="hc1_cool_request",
-        mtec_key="hc1_cool_request",
-        translation_key="hc1_cool_request",
-        state_class=SensorStateClass.MEASUREMENT,
-        icon="mdi:snowflake",
-    ),
-    MtecSensorEntityDescription(
-        key="hc1_humidity",
-        mtec_key="hc1_humidity",
-        translation_key="hc1_humidity",
-        native_unit_of_measurement=PERCENTAGE,
-        device_class=SensorDeviceClass.HUMIDITY,
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    MtecSensorEntityDescription(
-        key="hc1_mixer",
-        mtec_key="hc1_mixer",
-        translation_key="hc1_mixer",
-        native_unit_of_measurement=PERCENTAGE,
-        state_class=SensorStateClass.MEASUREMENT,
-        icon="mdi:valve",
-    ),
     # Solar
     MtecSensorEntityDescription(
         key="solar_collector_temp",
@@ -882,20 +728,6 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[MtecBinarySensorEntityDescription, ...] = (
         icon="mdi:pump",
     ),
     MtecBinarySensorEntityDescription(
-        key="hc0_pump",
-        mtec_key="hc0_pump",
-        translation_key="hc0_pump",
-        device_class=BinarySensorDeviceClass.RUNNING,
-        icon="mdi:pump",
-    ),
-    MtecBinarySensorEntityDescription(
-        key="hc1_pump",
-        mtec_key="hc1_pump",
-        translation_key="hc1_pump",
-        device_class=BinarySensorDeviceClass.RUNNING,
-        icon="mdi:pump",
-    ),
-    MtecBinarySensorEntityDescription(
         key="pv_excess_energy",
         mtec_key="pv_excess_energy",
         translation_key="pv_excess_energy",
@@ -931,74 +763,6 @@ NUMBER_DESCRIPTIONS: tuple[MtecNumberEntityDescription, ...] = (
         native_step=0.5,
         icon="mdi:water-thermometer",
     ),
-    # Heat circuit 0 temperature settings
-    MtecNumberEntityDescription(
-        key="hc0_day_temp",
-        mtec_key="hc0_day_temp",
-        translation_key="hc0_day_temp",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=NumberDeviceClass.TEMPERATURE,
-        native_min_value=10.0,
-        native_max_value=30.0,
-        native_step=0.5,
-        icon="mdi:weather-sunny",
-    ),
-    MtecNumberEntityDescription(
-        key="hc0_night_temp",
-        mtec_key="hc0_night_temp",
-        translation_key="hc0_night_temp",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=NumberDeviceClass.TEMPERATURE,
-        native_min_value=10.0,
-        native_max_value=30.0,
-        native_step=0.5,
-        icon="mdi:weather-night",
-    ),
-    MtecNumberEntityDescription(
-        key="hc0_offset_temp",
-        mtec_key="hc0_offset_temp",
-        translation_key="hc0_offset_temp",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=NumberDeviceClass.TEMPERATURE,
-        native_min_value=-2.5,
-        native_max_value=2.5,
-        native_step=0.5,
-        icon="mdi:thermometer-plus",
-    ),
-    # Heat circuit 1 temperature settings
-    MtecNumberEntityDescription(
-        key="hc1_day_temp",
-        mtec_key="hc1_day_temp",
-        translation_key="hc1_day_temp",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=NumberDeviceClass.TEMPERATURE,
-        native_min_value=10.0,
-        native_max_value=30.0,
-        native_step=0.5,
-        icon="mdi:weather-sunny",
-    ),
-    MtecNumberEntityDescription(
-        key="hc1_night_temp",
-        mtec_key="hc1_night_temp",
-        translation_key="hc1_night_temp",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=NumberDeviceClass.TEMPERATURE,
-        native_min_value=10.0,
-        native_max_value=30.0,
-        native_step=0.5,
-        icon="mdi:weather-night",
-    ),
-    MtecNumberEntityDescription(
-        key="hc1_offset_temp",
-        mtec_key="hc1_offset_temp",
-        translation_key="hc1_offset_temp",
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        device_class=NumberDeviceClass.TEMPERATURE,
-        native_min_value=-2.5,
-        native_max_value=2.5,
-        native_step=0.5,
-        icon="mdi:thermometer-plus",
-    ),
 )
 
 
@@ -1020,22 +784,6 @@ SELECT_DESCRIPTIONS: tuple[MtecSelectEntityDescription, ...] = (
         icon="mdi:water-boiler",
     ),
     MtecSelectEntityDescription(
-        key="hc0_mode",
-        mtec_key="hc0_mode",
-        translation_key="hc0_mode",
-        options_map=HEAT_CIRCUIT_MODE_OPTIONS,  # type: ignore[arg-type]
-        options=list(HEAT_CIRCUIT_MODE_OPTIONS.values()),
-        icon="mdi:radiator",
-    ),
-    MtecSelectEntityDescription(
-        key="hc1_mode",
-        mtec_key="hc1_mode",
-        translation_key="hc1_mode",
-        options_map=HEAT_CIRCUIT_MODE_OPTIONS,  # type: ignore[arg-type]
-        options=list(HEAT_CIRCUIT_MODE_OPTIONS.values()),
-        icon="mdi:radiator",
-    ),
-    MtecSelectEntityDescription(
         key="sg_ready_mode",
         mtec_key="sg_ready_mode",
         translation_key="sg_ready_mode",
@@ -1044,5 +792,151 @@ SELECT_DESCRIPTIONS: tuple[MtecSelectEntityDescription, ...] = (
         icon="mdi:transmission-tower",
     ),
 )
+
+# --- Generated heat circuit entity descriptions (hc0–hc7) ---
+
+_hc_sensor_list: list[MtecSensorEntityDescription] = []
+_hc_binary_sensor_list: list[MtecBinarySensorEntityDescription] = []
+_hc_number_list: list[MtecNumberEntityDescription] = []
+_hc_select_list: list[MtecSelectEntityDescription] = []
+
+for _i in range(MAX_HEAT_CIRCUITS):
+    _p = f"hc{_i}"
+    _n = f"HC{_i}"
+    _hc_sensor_list.extend(
+        [
+            MtecSensorEntityDescription(
+                key=f"{_p}_room_temp",
+                mtec_key=f"{_p}_room_temp",
+                name=f"{_n} room temperature",
+                native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+                device_class=SensorDeviceClass.TEMPERATURE,
+                state_class=SensorStateClass.MEASUREMENT,
+            ),
+            MtecSensorEntityDescription(
+                key=f"{_p}_room_set_temp",
+                mtec_key=f"{_p}_room_set_temp",
+                name=f"{_n} room set temperature",
+                native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+                device_class=SensorDeviceClass.TEMPERATURE,
+                state_class=SensorStateClass.MEASUREMENT,
+            ),
+            MtecSensorEntityDescription(
+                key=f"{_p}_flow_actual_temp",
+                mtec_key=f"{_p}_flow_actual_temp",
+                name=f"{_n} flow temperature",
+                native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+                device_class=SensorDeviceClass.TEMPERATURE,
+                state_class=SensorStateClass.MEASUREMENT,
+            ),
+            MtecSensorEntityDescription(
+                key=f"{_p}_flow_set_temp",
+                mtec_key=f"{_p}_flow_set_temp",
+                name=f"{_n} flow set temperature",
+                native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+                device_class=SensorDeviceClass.TEMPERATURE,
+                state_class=SensorStateClass.MEASUREMENT,
+            ),
+            MtecSensorEntityDescription(
+                key=f"{_p}_return_temp",
+                mtec_key=f"{_p}_return_temp",
+                name=f"{_n} return temperature",
+                native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+                device_class=SensorDeviceClass.TEMPERATURE,
+                state_class=SensorStateClass.MEASUREMENT,
+            ),
+            MtecSensorEntityDescription(
+                key=f"{_p}_heat_request",
+                mtec_key=f"{_p}_heat_request",
+                name=f"{_n} heat request",
+                state_class=SensorStateClass.MEASUREMENT,
+                icon="mdi:fire",
+            ),
+            MtecSensorEntityDescription(
+                key=f"{_p}_cool_request",
+                mtec_key=f"{_p}_cool_request",
+                name=f"{_n} cool request",
+                state_class=SensorStateClass.MEASUREMENT,
+                icon="mdi:snowflake",
+            ),
+            MtecSensorEntityDescription(
+                key=f"{_p}_humidity",
+                mtec_key=f"{_p}_humidity",
+                name=f"{_n} room humidity",
+                native_unit_of_measurement=PERCENTAGE,
+                device_class=SensorDeviceClass.HUMIDITY,
+                state_class=SensorStateClass.MEASUREMENT,
+            ),
+            MtecSensorEntityDescription(
+                key=f"{_p}_mixer",
+                mtec_key=f"{_p}_mixer",
+                name=f"{_n} mixer position",
+                native_unit_of_measurement=PERCENTAGE,
+                state_class=SensorStateClass.MEASUREMENT,
+                icon="mdi:valve",
+            ),
+        ]
+    )
+    _hc_binary_sensor_list.append(
+        MtecBinarySensorEntityDescription(
+            key=f"{_p}_pump",
+            mtec_key=f"{_p}_pump",
+            name=f"{_n} pump",
+            device_class=BinarySensorDeviceClass.RUNNING,
+            icon="mdi:pump",
+        ),
+    )
+    _hc_number_list.extend(
+        [
+            MtecNumberEntityDescription(
+                key=f"{_p}_day_temp",
+                mtec_key=f"{_p}_day_temp",
+                name=f"{_n} day temperature",
+                native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+                device_class=NumberDeviceClass.TEMPERATURE,
+                native_min_value=10.0,
+                native_max_value=30.0,
+                native_step=0.5,
+                icon="mdi:weather-sunny",
+            ),
+            MtecNumberEntityDescription(
+                key=f"{_p}_night_temp",
+                mtec_key=f"{_p}_night_temp",
+                name=f"{_n} night temperature",
+                native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+                device_class=NumberDeviceClass.TEMPERATURE,
+                native_min_value=10.0,
+                native_max_value=30.0,
+                native_step=0.5,
+                icon="mdi:weather-night",
+            ),
+            MtecNumberEntityDescription(
+                key=f"{_p}_offset_temp",
+                mtec_key=f"{_p}_offset_temp",
+                name=f"{_n} offset temperature",
+                native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+                device_class=NumberDeviceClass.TEMPERATURE,
+                native_min_value=-2.5,
+                native_max_value=2.5,
+                native_step=0.5,
+                icon="mdi:thermometer-plus",
+            ),
+        ]
+    )
+    _hc_select_list.append(
+        MtecSelectEntityDescription(
+            key=f"{_p}_mode",
+            mtec_key=f"{_p}_mode",
+            name=f"{_n} operating mode",
+            options_map=HEAT_CIRCUIT_MODE_OPTIONS,  # type: ignore[arg-type]
+            options=list(HEAT_CIRCUIT_MODE_OPTIONS.values()),
+            icon="mdi:radiator",
+        ),
+    )
+
+SENSOR_DESCRIPTIONS = SENSOR_DESCRIPTIONS + tuple(_hc_sensor_list)
+BINARY_SENSOR_DESCRIPTIONS = BINARY_SENSOR_DESCRIPTIONS + tuple(_hc_binary_sensor_list)
+NUMBER_DESCRIPTIONS = NUMBER_DESCRIPTIONS + tuple(_hc_number_list)
+SELECT_DESCRIPTIONS = SELECT_DESCRIPTIONS + tuple(_hc_select_list)
 
 PLATFORMS = ["binary_sensor", "climate", "sensor", "number", "select"]

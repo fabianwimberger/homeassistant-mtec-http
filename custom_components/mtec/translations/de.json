@@ -35,15 +35,9 @@
       "hot_water_heat_request": { "name": "Warmwasser Waermeanforderung" },
       "hot_water_pump": { "name": "Warmwasserpumpe" },
       "hot_water_circ_pump": { "name": "Warmwasser Zirkulationspumpe" },
-      "hc0_pump": { "name": "HK0 Pumpe" },
-      "hc1_pump": { "name": "HK1 Pumpe" },
       "pv_excess_energy": { "name": "PV Ueberschussenergie" },
       "ext_heat_source": { "name": "Externe Waermequelle" },
       "screed_drying_active": { "name": "Estrichtrocknung" }
-    },
-    "climate": {
-      "hc0_climate": { "name": "HK0 Heizkreis" },
-      "hc1_climate": { "name": "HK1 Heizkreis" }
     },
     "sensor": {
       "outdoor_temp": { "name": "Aussentemperatur" },
@@ -76,24 +70,6 @@
       "buffer_switch_valve": { "name": "Pufferspeicher Umschaltventil" },
       "hot_water_top_temp": { "name": "Warmwasser oben" },
       "hot_water_circ_temp": { "name": "Warmwasser Zirkulationstemperatur" },
-      "hc0_room_temp": { "name": "HK0 Raumtemperatur" },
-      "hc0_room_set_temp": { "name": "HK0 Raum-Solltemperatur" },
-      "hc0_flow_actual_temp": { "name": "HK0 Vorlauftemperatur" },
-      "hc0_flow_set_temp": { "name": "HK0 Vorlauf-Solltemperatur" },
-      "hc0_return_temp": { "name": "HK0 Ruecklauftemperatur" },
-      "hc0_heat_request": { "name": "HK0 Waermeanforderung" },
-      "hc0_cool_request": { "name": "HK0 Kuehlanforderung" },
-      "hc0_humidity": { "name": "HK0 Raumfeuchtigkeit" },
-      "hc0_mixer": { "name": "HK0 Mischerstellung" },
-      "hc1_room_temp": { "name": "HK1 Raumtemperatur" },
-      "hc1_room_set_temp": { "name": "HK1 Raum-Solltemperatur" },
-      "hc1_flow_actual_temp": { "name": "HK1 Vorlauftemperatur" },
-      "hc1_flow_set_temp": { "name": "HK1 Vorlauf-Solltemperatur" },
-      "hc1_return_temp": { "name": "HK1 Ruecklauftemperatur" },
-      "hc1_heat_request": { "name": "HK1 Waermeanforderung" },
-      "hc1_cool_request": { "name": "HK1 Kuehlanforderung" },
-      "hc1_humidity": { "name": "HK1 Raumfeuchtigkeit" },
-      "hc1_mixer": { "name": "HK1 Mischerstellung" },
       "solar_collector_temp": { "name": "Solarkollektortemperatur" },
       "pv_meter_power": { "name": "PV Zaehlerleistung" },
       "ext_heat_source_request": { "name": "Externe Waermequelle Anforderung" },
@@ -104,19 +80,11 @@
       "alarm_id_4": { "name": "Alarm 5" }
     },
     "number": {
-      "hot_water_target_temp_set": { "name": "Warmwasser Solltemperatur" },
-      "hc0_day_temp": { "name": "HK0 Tagtemperatur" },
-      "hc0_night_temp": { "name": "HK0 Nachttemperatur" },
-      "hc0_offset_temp": { "name": "HK0 Offset-Temperatur" },
-      "hc1_day_temp": { "name": "HK1 Tagtemperatur" },
-      "hc1_night_temp": { "name": "HK1 Nachttemperatur" },
-      "hc1_offset_temp": { "name": "HK1 Offset-Temperatur" }
+      "hot_water_target_temp_set": { "name": "Warmwasser Solltemperatur" }
     },
     "select": {
       "system_operating_mode": { "name": "Betriebsmodus" },
       "hot_water_mode": { "name": "Warmwasser-Modus" },
-      "hc0_mode": { "name": "HK0 Betriebsmodus" },
-      "hc1_mode": { "name": "HK1 Betriebsmodus" },
       "sg_ready_mode": { "name": "SG Ready Modus" }
     }
   }

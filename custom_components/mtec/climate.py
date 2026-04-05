@@ -16,7 +16,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .api import MtecApiError
-from .const import HeatCircuitMode
+from .const import MAX_HEAT_CIRCUITS, HeatCircuitMode
 from .coordinator import MtecDataCoordinator
 from .entity import MtecEntity
 
@@ -62,23 +62,15 @@ _MODE_TO_PRESET: dict[int, str] = {
 
 CLIMATE_CIRCUITS = [
     {
-        "circuit": 0,
-        "mode_key": "hc0_mode",
-        "room_temp_key": "hc0_room_temp",
-        "room_set_temp_key": "hc0_room_set_temp",
-        "day_temp_key": "hc0_day_temp",
-        "night_temp_key": "hc0_night_temp",
-        "translation_key": "hc0_climate",
-    },
-    {
-        "circuit": 1,
-        "mode_key": "hc1_mode",
-        "room_temp_key": "hc1_room_temp",
-        "room_set_temp_key": "hc1_room_set_temp",
-        "day_temp_key": "hc1_day_temp",
-        "night_temp_key": "hc1_night_temp",
-        "translation_key": "hc1_climate",
-    },
+        "circuit": i,
+        "mode_key": f"hc{i}_mode",
+        "room_temp_key": f"hc{i}_room_temp",
+        "room_set_temp_key": f"hc{i}_room_set_temp",
+        "day_temp_key": f"hc{i}_day_temp",
+        "night_temp_key": f"hc{i}_night_temp",
+        "translation_key": "hc_climate",
+    }
+    for i in range(MAX_HEAT_CIRCUITS)
 ]
 
 
@@ -89,7 +81,12 @@ async def async_setup_entry(
 ) -> None:
     """Set up M-TEC climate entities."""
     coordinator: MtecDataCoordinator = entry.runtime_data
-    async_add_entities(MtecClimate(coordinator, circuit) for circuit in CLIMATE_CIRCUITS)
+    available = coordinator.client.available_keys
+    async_add_entities(
+        MtecClimate(coordinator, circuit)
+        for circuit in CLIMATE_CIRCUITS
+        if circuit["mode_key"] in available
+    )
 
 
 class MtecClimate(MtecEntity, ClimateEntity):
@@ -119,7 +116,7 @@ class MtecClimate(MtecEntity, ClimateEntity):
         self._day_temp_key = circuit["day_temp_key"]
         self._night_temp_key = circuit["night_temp_key"]
         self._mtec_key = circuit["mode_key"]
-        self._attr_translation_key = circuit["translation_key"]
+        self._attr_name = f"HC{self._circuit} heating circuit"
         self._attr_unique_id = f"{coordinator.client.host}_hc{self._circuit}_climate"
         self._attr_icon = "mdi:radiator"
 

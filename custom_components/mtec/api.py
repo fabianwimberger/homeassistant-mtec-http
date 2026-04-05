@@ -28,6 +28,11 @@ class MtecApiClient:
     def host(self) -> str:
         return self._host
 
+    @property
+    def available_keys(self) -> set[str]:
+        """Return the set of signal keys available on this unit."""
+        return self._available_keys or set()
+
     async def async_validate_connection(self) -> bool:
         """Validate we can connect to the heat pump."""
         try:
