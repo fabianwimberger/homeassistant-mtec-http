@@ -4,6 +4,8 @@
 [![codecov](https://codecov.io/gh/fabianwimberger/homeassistant-mtec-http/branch/main/graph/badge.svg)](https://codecov.io/gh/fabianwimberger/homeassistant-mtec-http)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+> **⚠️ Disclaimer**: This is an independent, open-source project created by the community. It is **not affiliated with, endorsed by, or sponsored by M-TEC or mtec-systems**. "M-TEC" and the M-TEC logo are trademarks of their respective owners. Use at your own risk.
+
 Custom integration for [Home Assistant](https://www.home-assistant.io/) that communicates directly with M-TEC heat pumps via their built-in HTTP API (`/var/readWriteVars`). No MQTT broker or middleman needed.
 
 ## Why This Project?
@@ -157,6 +159,10 @@ The device card shows:
 - Check network connectivity to the heat pump
 - Some entities may not be available on your specific unit configuration
 
-## License
+## License & Disclaimer
 
 MIT License — see [LICENSE](LICENSE) file.
+
+### Third-Party Trademarks
+
+This project uses the "M-TEC" name and logo to identify the compatible heat pump systems. "M-TEC" is a trademark of M-TEC or mtec-systems. This project is an independent, community-created integration and is **not affiliated with, endorsed by, or sponsored by M-TEC or mtec-systems**. Use of the M-TEC trademark is for identification and compatibility purposes only.
