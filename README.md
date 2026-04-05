@@ -1,6 +1,7 @@
 # M-TEC Heat Pump Integration for Home Assistant
 
 [![CI](https://github.com/fabianwimberger/homeassistant-mtec-http/actions/workflows/ci.yml/badge.svg)](https://github.com/fabianwimberger/homeassistant-mtec-http/actions)
+[![codecov](https://codecov.io/gh/fabianwimberger/homeassistant-mtec-http/branch/main/graph/badge.svg)](https://codecov.io/gh/fabianwimberger/homeassistant-mtec-http)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Custom integration for [Home Assistant](https://www.home-assistant.io/) that communicates directly with M-TEC heat pumps via their built-in HTTP API (`/var/readWriteVars`). No MQTT broker or middleman needed.
