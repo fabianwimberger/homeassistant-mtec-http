@@ -68,11 +68,16 @@ class MtecApiClient:
 
         The M-TEC API returns HTTP 500 if any requested signal doesn't exist,
         so we must probe individually for signals that may not be present.
+
+        Additionally, heating circuits that return flow_set_temp == 0 are
+        considered phantom circuits and are filtered out.
         """
         if self._available_keys is not None:
             return self._available_keys
 
         available: set[str] = set()
+        hc_flow_set_temps: dict[str, float] = {}
+
         for key, signal_name in SIGNAL_MAP.items():
             try:
                 async with self._session.post(
@@ -84,8 +89,23 @@ class MtecApiClient:
                         data = await resp.json()
                         if data and isinstance(data, list) and "value" in data[0]:
                             available.add(key)
+                            # Track flow_set_temp values for heat circuit detection
+                            if "_flow_set_temp" in key:
+                                try:
+                                    hc_flow_set_temps[key] = float(data[0]["value"])
+                                except (ValueError, TypeError):
+                                    pass
             except (aiohttp.ClientError, TimeoutError):
                 continue
+
+        # Filter out phantom heating circuits (flow_set_temp == 0)
+        for key in list(available):
+            if key.startswith("hc") and "_" in key:
+                hc_num = key.split("_")[0]  # e.g., "hc0"
+                flow_set_key = f"{hc_num}_flow_set_temp"
+                if flow_set_key in hc_flow_set_temps and hc_flow_set_temps[flow_set_key] == 0:
+                    # Remove all signals for this phantom circuit
+                    available.discard(key)
 
         self._available_keys = available
         _LOGGER.debug("Probed %d/%d available signals", len(available), len(SIGNAL_MAP))
