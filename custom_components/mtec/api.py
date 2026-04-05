@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import logging
 
 import aiohttp
@@ -91,10 +92,8 @@ class MtecApiClient:
                             available.add(key)
                             # Track flow_set_temp values for heat circuit detection
                             if "_flow_set_temp" in key:
-                                try:
+                                with contextlib.suppress(ValueError, TypeError):
                                     hc_flow_set_temps[key] = float(data[0]["value"])
-                                except (ValueError, TypeError):
-                                    pass
             except (aiohttp.ClientError, TimeoutError):
                 continue
 

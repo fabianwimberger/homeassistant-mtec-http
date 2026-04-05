@@ -2,29 +2,32 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import pytest
-from aioresponses import aioresponses
+from aioresponses import CallbackResult, aioresponses
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from custom_components.mtec.api import MtecApiClient, MtecApiError
+from custom_components.mtec.const import SIGNAL_MAP
 
 
-async def test_api_client_init():
+async def test_api_client_init() -> None:
     """Test API client initialization."""
     client = MtecApiClient("192.168.1.100", None)
     assert client.host == "192.168.1.100"
     assert client._base_url == "http://192.168.1.100/var/readWriteVars"
 
 
-async def test_api_client_init_with_port():
+async def test_api_client_init_with_port() -> None:
     """Test API client initialization with port."""
     client = MtecApiClient("192.168.1.100:8080", None)
     assert client.host == "192.168.1.100:8080"
     assert client._base_url == "http://192.168.1.100:8080/var/readWriteVars"
 
 
-async def test_validate_connection_success(hass: HomeAssistant):
+async def test_validate_connection_success(hass: HomeAssistant) -> None:
     """Test successful connection validation."""
     with aioresponses() as m:
         m.post(
@@ -38,7 +41,7 @@ async def test_validate_connection_success(hass: HomeAssistant):
         assert result is True
 
 
-async def test_validate_connection_failure(hass: HomeAssistant):
+async def test_validate_connection_failure(hass: HomeAssistant) -> None:
     """Test connection validation with server error."""
     with aioresponses() as m:
         m.post("http://192.168.1.100/var/readWriteVars", status=500)
@@ -49,7 +52,7 @@ async def test_validate_connection_failure(hass: HomeAssistant):
         assert result is False
 
 
-async def test_read_device_info(hass: HomeAssistant):
+async def test_read_device_info(hass: HomeAssistant) -> None:
     """Test reading device info."""
     with aioresponses() as m:
         m.post(
@@ -67,7 +70,7 @@ async def test_read_device_info(hass: HomeAssistant):
         assert result["firmware_version"] == "1.33.7.0"
 
 
-async def test_probe_available_keys(hass: HomeAssistant):
+async def test_probe_available_keys(hass: HomeAssistant) -> None:
     """Test probing available signal keys."""
     with aioresponses() as m:
         m.post("http://192.168.1.100/var/readWriteVars", payload=[{"name": "test", "value": "1"}])
@@ -80,7 +83,7 @@ async def test_probe_available_keys(hass: HomeAssistant):
         assert len(available) > 0
 
 
-async def test_read_values(hass: HomeAssistant):
+async def test_read_values(hass: HomeAssistant) -> None:
     """Test reading values from the API."""
     with aioresponses() as m:
         m.post(
@@ -96,7 +99,7 @@ async def test_read_values(hass: HomeAssistant):
         assert values["outdoor_temp"] == 15.5
 
 
-async def test_write_value(hass: HomeAssistant):
+async def test_write_value(hass: HomeAssistant) -> None:
     """Test writing a value to the API."""
     with aioresponses() as m:
         m.post("http://192.168.1.100/var/readWriteVars?action=set", payload=[{"success": True}])
@@ -107,7 +110,7 @@ async def test_write_value(hass: HomeAssistant):
         await client.async_write_value("hc0_day_temp", 22.0)
 
 
-async def test_write_value_unknown_key(hass: HomeAssistant):
+async def test_write_value_unknown_key(hass: HomeAssistant) -> None:
     """Test writing to an unknown signal key."""
     session = async_get_clientsession(hass)
     client = MtecApiClient("192.168.1.100", session)
@@ -116,7 +119,7 @@ async def test_write_value_unknown_key(hass: HomeAssistant):
         await client.async_write_value("unknown_key", 22.0)
 
 
-async def test_read_values_http_error(hass: HomeAssistant):
+async def test_read_values_http_error(hass: HomeAssistant) -> None:
     """Test handling HTTP errors."""
     with aioresponses() as m:
         m.post("http://192.168.1.100/var/readWriteVars", status=500)
@@ -128,7 +131,7 @@ async def test_read_values_http_error(hass: HomeAssistant):
             await client.async_read_values(["outdoor_temp"])
 
 
-async def test_parse_value_bool():
+async def test_parse_value_bool() -> None:
     """Test parsing boolean values."""
     from custom_components.mtec.api import _parse_value
 
@@ -136,7 +139,7 @@ async def test_parse_value_bool():
     assert _parse_value(False) == 0.0
 
 
-async def test_parse_value_string_bool():
+async def test_parse_value_string_bool() -> None:
     """Test parsing string boolean values."""
     from custom_components.mtec.api import _parse_value
 
@@ -144,7 +147,7 @@ async def test_parse_value_string_bool():
     assert _parse_value("false") == 0.0
 
 
-async def test_parse_value_numeric():
+async def test_parse_value_numeric() -> None:
     """Test parsing numeric values."""
     from custom_components.mtec.api import _parse_value
 
@@ -153,7 +156,7 @@ async def test_parse_value_numeric():
     assert _parse_value("123.45") == 123.45
 
 
-async def test_parse_value_invalid():
+async def test_parse_value_invalid() -> None:
     """Test parsing invalid values."""
     from custom_components.mtec.api import _parse_value
 
@@ -162,7 +165,7 @@ async def test_parse_value_invalid():
     assert _parse_value([1, 2, 3]) is None
 
 
-async def test_available_keys_property(hass: HomeAssistant):
+async def test_available_keys_property(hass: HomeAssistant) -> None:
     """Test available_keys property returns empty set before probing."""
     session = async_get_clientsession(hass)
     client = MtecApiClient("192.168.1.100", session)
@@ -173,7 +176,7 @@ async def test_available_keys_property(hass: HomeAssistant):
     assert client.available_keys == {"outdoor_temp", "hc0_mode"}
 
 
-async def test_write_value_http_error(hass: HomeAssistant):
+async def test_write_value_http_error(hass: HomeAssistant) -> None:
     """Test writing a value when server returns error."""
     with aioresponses() as m:
         m.post(
@@ -187,7 +190,7 @@ async def test_write_value_http_error(hass: HomeAssistant):
             await client.async_write_value("hc0_day_temp", 22.0)
 
 
-async def test_probe_partial_availability(hass: HomeAssistant):
+async def test_probe_partial_availability(hass: HomeAssistant) -> None:
     """Test probing where some signals return 500 (unavailable)."""
     with aioresponses() as m:
         # Mock first call as success, rest as 500
@@ -207,7 +210,7 @@ async def test_probe_partial_availability(hass: HomeAssistant):
         assert len(available) == 1
 
 
-async def test_read_device_info_with_failure(hass: HomeAssistant):
+async def test_read_device_info_with_failure(hass: HomeAssistant) -> None:
     """Test reading device info when some signals fail."""
     with aioresponses() as m:
         m.post(
@@ -229,10 +232,8 @@ async def test_read_device_info_with_failure(hass: HomeAssistant):
         assert "serial_number" not in result
 
 
-async def test_probe_phantom_heat_circuits_filtered(hass: HomeAssistant):
+async def test_probe_phantom_heat_circuits_filtered(hass: HomeAssistant) -> None:
     """Test that phantom heat circuits (flow_set_temp == 0) are filtered out."""
-    from custom_components.mtec.const import SIGNAL_MAP
-    from aioresponses import CallbackResult
 
     # Helper to generate heat circuit signals
     def get_hc_signals(hc_num: int) -> list[str]:
@@ -243,7 +244,7 @@ async def test_probe_phantom_heat_circuits_filtered(hass: HomeAssistant):
         # Track which signals get probed
         probed_values: dict[str, float] = {}
 
-        def callback(url, **kwargs):
+        def callback(url: str, **kwargs: Any) -> CallbackResult:
             """Return different values based on the signal being requested."""
             import json
             # Get request body from json parameter
@@ -276,9 +277,7 @@ async def test_probe_phantom_heat_circuits_filtered(hass: HomeAssistant):
                 value = 20.0 if "temp" in key else 1.0
 
             # HC2: phantom circuit with zero flow_set_temp
-            elif key == "hc2_flow_set_temp":
-                value = 0.0
-            elif key and key.startswith("hc2_"):
+            elif key == "hc2_flow_set_temp" or (key and key.startswith("hc2_")):
                 value = 0.0
 
             if key:
