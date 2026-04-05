@@ -247,6 +247,7 @@ async def test_probe_phantom_heat_circuits_filtered(hass: HomeAssistant) -> None
         def callback(url: str, **kwargs: Any) -> CallbackResult:
             """Return different values based on the signal being requested."""
             import json
+
             # Get request body from json parameter
             request_data = kwargs.get("json")
             if request_data is None:
