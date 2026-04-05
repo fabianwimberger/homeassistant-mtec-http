@@ -227,3 +227,90 @@ async def test_read_device_info_with_failure(hass: HomeAssistant):
 
         assert result["firmware_version"] == "1.0.0"
         assert "serial_number" not in result
+
+
+async def test_probe_phantom_heat_circuits_filtered(hass: HomeAssistant):
+    """Test that phantom heat circuits (flow_set_temp == 0) are filtered out."""
+    from custom_components.mtec.const import SIGNAL_MAP
+    from aioresponses import CallbackResult
+
+    # Helper to generate heat circuit signals
+    def get_hc_signals(hc_num: int) -> list[str]:
+        """Get all signal keys for a heat circuit."""
+        return [k for k in SIGNAL_MAP if k.startswith(f"hc{hc_num}_")]
+
+    with aioresponses() as m:
+        # Track which signals get probed
+        probed_values: dict[str, float] = {}
+
+        def callback(url, **kwargs):
+            """Return different values based on the signal being requested."""
+            import json
+            # Get request body from json parameter
+            request_data = kwargs.get("json")
+            if request_data is None:
+                # Try to get from raw data
+                data = kwargs.get("data")
+                if data:
+                    request_data = json.loads(data)
+            signal_name = request_data[0]["name"] if request_data else ""
+            key = None
+            for k, v in SIGNAL_MAP.items():
+                if v == signal_name:
+                    key = k
+                    break
+
+            # Default value for most signals
+            value = 1.0
+
+            # HC0: real circuit with non-zero flow_set_temp
+            if key == "hc0_flow_set_temp":
+                value = 29.2
+            elif key and key.startswith("hc0_"):
+                value = 21.5 if "temp" in key else 1.0
+
+            # HC1: real circuit with non-zero flow_set_temp
+            elif key == "hc1_flow_set_temp":
+                value = 27.0
+            elif key and key.startswith("hc1_"):
+                value = 20.0 if "temp" in key else 1.0
+
+            # HC2: phantom circuit with zero flow_set_temp
+            elif key == "hc2_flow_set_temp":
+                value = 0.0
+            elif key and key.startswith("hc2_"):
+                value = 0.0
+
+            if key:
+                probed_values[key] = value
+
+            return CallbackResult(payload=[{"name": signal_name, "value": str(value)}])
+
+        # Mock all requests to the API endpoint
+        m.post("http://192.168.1.100/var/readWriteVars", callback=callback, repeat=True)
+
+        session = async_get_clientsession(hass)
+        client = MtecApiClient("192.168.1.100", session)
+
+        available = await client.async_probe_available_keys()
+
+        # Verify hc2_flow_set_temp was probed with value 0
+        assert "hc2_flow_set_temp" in probed_values
+        assert probed_values["hc2_flow_set_temp"] == 0.0
+
+        # Verify hc0_flow_set_temp and hc1_flow_set_temp were probed with non-zero
+        assert probed_values.get("hc0_flow_set_temp") == 29.2
+        assert probed_values.get("hc1_flow_set_temp") == 27.0
+
+        # HC0 and HC1 should be available (non-zero flow_set_temp)
+        hc0_signals = get_hc_signals(0)
+        hc1_signals = get_hc_signals(1)
+        for sig in hc0_signals:
+            assert sig in available, f"Expected {sig} to be available"
+        for sig in hc1_signals:
+            assert sig in available, f"Expected {sig} to be available"
+
+        # HC2 should be filtered out (flow_set_temp == 0)
+        hc2_signals = get_hc_signals(2)
+        for sig in hc2_signals:
+            assert sig not in available, f"Expected {sig} to be filtered out"
