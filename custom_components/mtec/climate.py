@@ -95,7 +95,10 @@ class MtecClimate(MtecEntity, ClimateEntity):
     _attr_temperature_unit = UnitOfTemperature.CELSIUS
     _attr_hvac_modes = [HVACMode.OFF, HVACMode.AUTO, HVACMode.HEAT]
     _attr_supported_features = (
-        ClimateEntityFeature.TARGET_TEMPERATURE | ClimateEntityFeature.PRESET_MODE
+        ClimateEntityFeature.TARGET_TEMPERATURE
+        | ClimateEntityFeature.PRESET_MODE
+        | ClimateEntityFeature.TURN_ON
+        | ClimateEntityFeature.TURN_OFF
     )
     _attr_preset_modes = [PRESET_NONE, PRESET_DAY, PRESET_NIGHT, PRESET_VACATION, PRESET_PARTY]
     _attr_target_temperature_step = 0.5
@@ -173,6 +176,14 @@ class MtecClimate(MtecEntity, ClimateEntity):
             _LOGGER.error("Failed to set HC%d mode: %s", self._circuit, err)
             return
         await self.coordinator.async_request_refresh()
+
+    async def async_turn_on(self) -> None:
+        """Turn on: set circuit to Timer (Auto) mode."""
+        await self.async_set_hvac_mode(HVACMode.AUTO)
+
+    async def async_turn_off(self) -> None:
+        """Turn off: set circuit to Standby mode."""
+        await self.async_set_hvac_mode(HVACMode.OFF)
 
     async def async_set_temperature(self, **kwargs: Any) -> None:
         """Set the target temperature (writes to the day temp setpoint)."""
