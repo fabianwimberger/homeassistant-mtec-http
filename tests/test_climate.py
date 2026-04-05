@@ -8,12 +8,12 @@ from unittest.mock import AsyncMock, MagicMock
 from homeassistant.components.climate import HVACMode
 
 from custom_components.mtec.api import MtecApiError
-from custom_components.mtec.climate import PRESET_DAY, PRESET_NIGHT, MtecClimate
+from custom_components.mtec.climate import MtecClimate
 from custom_components.mtec.const import HeatCircuitMode
 
 
 def test_climate_hvac_mode_day(coordinator_data: dict[str, Any]) -> None:
-    """Test HVAC mode when M-TEC mode is Day."""
+    """Test HVAC mode when M-TEC mode is Day - simplified UI shows AUTO."""
     coordinator = MagicMock()
     coordinator_data["hc0_mode"] = HeatCircuitMode.DAY
     coordinator.data = coordinator_data
@@ -31,7 +31,8 @@ def test_climate_hvac_mode_day(coordinator_data: dict[str, Any]) -> None:
     }
 
     climate = MtecClimate(coordinator, circuit)
-    assert climate.hvac_mode == HVACMode.HEAT
+    # With simplified UI, all "on" modes display as AUTO
+    assert climate.hvac_mode == HVACMode.AUTO
 
 
 def test_climate_hvac_mode_standby(coordinator_data: dict[str, Any]) -> None:
@@ -118,50 +119,6 @@ def test_climate_target_temperature(coordinator_data: dict[str, Any]) -> None:
 
     climate = MtecClimate(coordinator, circuit)
     assert climate.target_temperature == 21.0
-
-
-def test_climate_preset_mode(coordinator_data: dict[str, Any]) -> None:
-    """Test preset mode mapping."""
-    coordinator = MagicMock()
-    coordinator_data["hc0_mode"] = HeatCircuitMode.DAY
-    coordinator.data = coordinator_data
-    coordinator.last_update_success = True
-    coordinator.client.host = "192.168.1.100"
-
-    circuit = {
-        "circuit": 0,
-        "mode_key": "hc0_mode",
-        "room_temp_key": "hc0_room_temp",
-        "room_set_temp_key": "hc0_room_set_temp",
-        "day_temp_key": "hc0_day_temp",
-        "night_temp_key": "hc0_night_temp",
-        "translation_key": "hc0_climate",
-    }
-
-    climate = MtecClimate(coordinator, circuit)
-    assert climate.preset_mode == PRESET_DAY
-
-
-def test_climate_preset_mode_night(coordinator_data: dict[str, Any]) -> None:
-    """Test preset mode for Night."""
-    coordinator = MagicMock()
-    coordinator_data["hc0_mode"] = HeatCircuitMode.NIGHT
-    coordinator.data = coordinator_data
-    coordinator.last_update_success = True
-    coordinator.client.host = "192.168.1.100"
-
-    circuit = {
-        "circuit": 0,
-        "mode_key": "hc0_mode",
-        "room_temp_key": "hc0_room_temp",
-        "room_set_temp_key": "hc0_room_set_temp",
-        "day_temp_key": "hc0_day_temp",
-        "night_temp_key": "hc0_night_temp",
-        "translation_key": "hc0_climate",
-    }
-
-    climate = MtecClimate(coordinator, circuit)
-    assert climate.preset_mode == PRESET_NIGHT
 
 
 def test_climate_unique_id(coordinator_data: dict[str, Any]) -> None:
@@ -266,33 +223,6 @@ async def test_climate_set_temperature_night_mode(coordinator_data: dict[str, An
     coordinator.client.async_write_value.assert_called_once_with("hc0_night_temp", 18.5)
 
 
-async def test_climate_set_preset_mode(coordinator_data: dict[str, Any]) -> None:
-    """Test setting preset mode."""
-    coordinator = MagicMock()
-    coordinator.data = coordinator_data
-    coordinator.last_update_success = True
-    coordinator.client.host = "192.168.1.100"
-    coordinator.async_request_refresh = AsyncMock()
-    coordinator.client.async_write_value = AsyncMock()
-
-    circuit = {
-        "circuit": 0,
-        "mode_key": "hc0_mode",
-        "room_temp_key": "hc0_room_temp",
-        "room_set_temp_key": "hc0_room_set_temp",
-        "day_temp_key": "hc0_day_temp",
-        "night_temp_key": "hc0_night_temp",
-        "translation_key": "hc0_climate",
-    }
-
-    climate = MtecClimate(coordinator, circuit)
-    await climate.async_set_preset_mode(PRESET_NIGHT)
-
-    # NIGHT preset should map to mode 3
-    coordinator.client.async_write_value.assert_called_once_with("hc0_mode", 3.0)
-    coordinator.async_request_refresh.assert_called_once()
-
-
 async def test_climate_set_hvac_mode_error(coordinator_data: dict[str, Any], caplog: Any) -> None:
     """Test setting HVAC mode with API error."""
     coordinator = MagicMock()
@@ -320,7 +250,7 @@ async def test_climate_set_hvac_mode_error(coordinator_data: dict[str, Any], cap
 
 
 def test_climate_hvac_modes() -> None:
-    """Test available HVAC modes."""
+    """Test available HVAC modes - simplified to OFF and AUTO only."""
     coordinator = MagicMock()
     coordinator.data = {}
     coordinator.last_update_success = True
@@ -337,28 +267,7 @@ def test_climate_hvac_modes() -> None:
     }
 
     climate = MtecClimate(coordinator, circuit)
+    # Simplified UI only has OFF and AUTO (on)
     assert HVACMode.OFF in climate.hvac_modes
     assert HVACMode.AUTO in climate.hvac_modes
-    assert HVACMode.HEAT in climate.hvac_modes
-
-
-def test_climate_preset_modes() -> None:
-    """Test available preset modes."""
-    coordinator = MagicMock()
-    coordinator.data = {}
-    coordinator.last_update_success = True
-    coordinator.client.host = "192.168.1.100"
-
-    circuit = {
-        "circuit": 0,
-        "mode_key": "hc0_mode",
-        "room_temp_key": "hc0_room_temp",
-        "room_set_temp_key": "hc0_room_set_temp",
-        "day_temp_key": "hc0_day_temp",
-        "night_temp_key": "hc0_night_temp",
-        "translation_key": "hc0_climate",
-    }
-
-    climate = MtecClimate(coordinator, circuit)
-    assert PRESET_DAY in climate.preset_modes
-    assert PRESET_NIGHT in climate.preset_modes
+    assert len(climate.hvac_modes) == 2

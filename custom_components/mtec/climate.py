@@ -24,13 +24,15 @@ _LOGGER = logging.getLogger(__name__)
 
 # Map M-TEC heat circuit modes to HVAC modes
 # Modbus doc: 0=Standby, 1=Timer, 2=Day, 3=Night, 4=Vacation, 5=Party, 8=Extern
+# Simplified to just OFF and AUTO for simple on/off UI
+# AUTO maps to Timer mode which is the standard 'on' behavior
 _MODE_TO_HVAC: dict[int, HVACMode] = {
     HeatCircuitMode.STANDBY: HVACMode.OFF,
     HeatCircuitMode.TIMER: HVACMode.AUTO,
-    HeatCircuitMode.DAY: HVACMode.HEAT,
-    HeatCircuitMode.NIGHT: HVACMode.HEAT,
+    HeatCircuitMode.DAY: HVACMode.AUTO,
+    HeatCircuitMode.NIGHT: HVACMode.AUTO,
     HeatCircuitMode.VACATION: HVACMode.AUTO,
-    HeatCircuitMode.PARTY: HVACMode.HEAT,
+    HeatCircuitMode.PARTY: HVACMode.AUTO,
     HeatCircuitMode.EXTERN: HVACMode.AUTO,
 }
 
@@ -38,7 +40,6 @@ _MODE_TO_HVAC: dict[int, HVACMode] = {
 _HVAC_TO_MODE: dict[HVACMode, int] = {
     HVACMode.OFF: HeatCircuitMode.STANDBY,
     HVACMode.AUTO: HeatCircuitMode.TIMER,
-    HVACMode.HEAT: HeatCircuitMode.DAY,
 }
 
 # Preset modes map to the M-TEC-specific modes beyond the basic HVAC modes
@@ -93,14 +94,12 @@ class MtecClimate(MtecEntity, ClimateEntity):
     """M-TEC climate entity for a heating circuit."""
 
     _attr_temperature_unit = UnitOfTemperature.CELSIUS
-    _attr_hvac_modes = [HVACMode.OFF, HVACMode.AUTO, HVACMode.HEAT]
+    _attr_hvac_modes = [HVACMode.OFF, HVACMode.AUTO]
     _attr_supported_features = (
         ClimateEntityFeature.TARGET_TEMPERATURE
-        | ClimateEntityFeature.PRESET_MODE
         | ClimateEntityFeature.TURN_ON
         | ClimateEntityFeature.TURN_OFF
     )
-    _attr_preset_modes = [PRESET_NONE, PRESET_DAY, PRESET_NIGHT, PRESET_VACATION, PRESET_PARTY]
     _attr_target_temperature_step = 0.5
     _attr_min_temp = 10.0
     _attr_max_temp = 30.0
@@ -197,25 +196,5 @@ class MtecClimate(MtecEntity, ClimateEntity):
             await self.coordinator.client.async_write_value(key, float(temp))
         except MtecApiError as err:
             _LOGGER.error("Failed to set HC%d temperature: %s", self._circuit, err)
-            return
-        await self.coordinator.async_request_refresh()
-
-    async def async_set_preset_mode(self, preset_mode: str) -> None:
-        """Set the preset mode."""
-        preset_to_mode = {
-            PRESET_NONE: HeatCircuitMode.TIMER,
-            PRESET_DAY: HeatCircuitMode.DAY,
-            PRESET_NIGHT: HeatCircuitMode.NIGHT,
-            PRESET_VACATION: HeatCircuitMode.VACATION,
-            PRESET_PARTY: HeatCircuitMode.PARTY,
-        }
-        mtec_mode = preset_to_mode.get(preset_mode)
-        if mtec_mode is None:
-            _LOGGER.error("Unknown preset: %s", preset_mode)
-            return
-        try:
-            await self.coordinator.client.async_write_value(self._mode_key, float(mtec_mode))
-        except MtecApiError as err:
-            _LOGGER.error("Failed to set HC%d preset: %s", self._circuit, err)
             return
         await self.coordinator.async_request_refresh()
