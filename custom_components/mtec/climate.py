@@ -22,17 +22,22 @@ from .entity import MtecEntity
 
 _LOGGER = logging.getLogger(__name__)
 
+# Preset mode constants
+PRESET_NONE = "none"
+PRESET_DAY = "Day"
+PRESET_NIGHT = "Night"
+PRESET_VACATION = "Vacation"
+PRESET_PARTY = "Party"
+
 # Map M-TEC heat circuit modes to HVAC modes
 # Modbus doc: 0=Standby, 1=Timer, 2=Day, 3=Night, 4=Vacation, 5=Party, 8=Extern
-# Simplified to just OFF and AUTO for simple on/off UI
-# AUTO maps to Timer mode which is the standard 'on' behavior
 _MODE_TO_HVAC: dict[int, HVACMode] = {
     HeatCircuitMode.STANDBY: HVACMode.OFF,
     HeatCircuitMode.TIMER: HVACMode.AUTO,
-    HeatCircuitMode.DAY: HVACMode.AUTO,
-    HeatCircuitMode.NIGHT: HVACMode.AUTO,
-    HeatCircuitMode.VACATION: HVACMode.AUTO,
-    HeatCircuitMode.PARTY: HVACMode.AUTO,
+    HeatCircuitMode.DAY: HVACMode.HEAT,
+    HeatCircuitMode.NIGHT: HVACMode.AUTO,  # Night is a preset of AUTO
+    HeatCircuitMode.VACATION: HVACMode.AUTO,  # Vacation is a preset of AUTO
+    HeatCircuitMode.PARTY: HVACMode.HEAT,  # Party is a preset of HEAT
     HeatCircuitMode.EXTERN: HVACMode.AUTO,
 }
 
@@ -40,26 +45,28 @@ _MODE_TO_HVAC: dict[int, HVACMode] = {
 _HVAC_TO_MODE: dict[HVACMode, int] = {
     HVACMode.OFF: HeatCircuitMode.STANDBY,
     HVACMode.AUTO: HeatCircuitMode.TIMER,
+    HVACMode.HEAT: HeatCircuitMode.DAY,
 }
 
-# Preset modes map to the M-TEC-specific modes beyond the basic HVAC modes
-PRESET_NONE = "none"
-PRESET_DAY = "Day"
-PRESET_NIGHT = "Night"
-PRESET_VACATION = "Vacation"
-PRESET_PARTY = "Party"
-
-# Map M-TEC mode to preset
+# Map M-TEC mode to preset (for modes that are presets)
 _MODE_TO_PRESET: dict[int, str] = {
     HeatCircuitMode.STANDBY: PRESET_NONE,
     HeatCircuitMode.TIMER: PRESET_NONE,
-    HeatCircuitMode.DAY: PRESET_DAY,
+    HeatCircuitMode.DAY: PRESET_NONE,  # Day is the base HEAT mode
     HeatCircuitMode.NIGHT: PRESET_NIGHT,
     HeatCircuitMode.VACATION: PRESET_VACATION,
     HeatCircuitMode.PARTY: PRESET_PARTY,
     HeatCircuitMode.EXTERN: PRESET_NONE,
 }
 
+# Map preset back to M-TEC mode
+_PRESET_TO_MODE: dict[str, int] = {
+    PRESET_NONE: HeatCircuitMode.TIMER,
+    PRESET_DAY: HeatCircuitMode.DAY,
+    PRESET_NIGHT: HeatCircuitMode.NIGHT,
+    PRESET_VACATION: HeatCircuitMode.VACATION,
+    PRESET_PARTY: HeatCircuitMode.PARTY,
+}
 
 CLIMATE_CIRCUITS = [
     {
@@ -94,9 +101,11 @@ class MtecClimate(MtecEntity, ClimateEntity):
     """M-TEC climate entity for a heating circuit."""
 
     _attr_temperature_unit = UnitOfTemperature.CELSIUS
-    _attr_hvac_modes = [HVACMode.OFF, HVACMode.AUTO]
+    _attr_hvac_modes = [HVACMode.OFF, HVACMode.AUTO, HVACMode.HEAT]
+    _attr_preset_modes = [PRESET_NONE, PRESET_DAY, PRESET_NIGHT, PRESET_VACATION, PRESET_PARTY]
     _attr_supported_features = (
         ClimateEntityFeature.TARGET_TEMPERATURE
+        | ClimateEntityFeature.PRESET_MODE
         | ClimateEntityFeature.TURN_ON
         | ClimateEntityFeature.TURN_OFF
     )
@@ -149,7 +158,7 @@ class MtecClimate(MtecEntity, ClimateEntity):
 
     @property
     def target_temperature(self) -> float | None:
-        """Return the target temperature (selected set temp from the pump)."""
+        """Return the target temperature."""
         if self.coordinator.data is None:
             return None
         value = self.coordinator.data.get(self._room_set_temp_key)
@@ -157,7 +166,7 @@ class MtecClimate(MtecEntity, ClimateEntity):
 
     @property
     def preset_mode(self) -> str | None:
-        """Return the current preset based on M-TEC mode."""
+        """Return the current preset mode."""
         raw = self._raw_mode()
         if raw is None:
             return None
@@ -177,7 +186,7 @@ class MtecClimate(MtecEntity, ClimateEntity):
         await self.coordinator.async_request_refresh()
 
     async def async_turn_on(self) -> None:
-        """Turn on: set circuit to Timer (Auto) mode."""
+        """Turn on: set circuit to AUTO (Timer) mode."""
         await self.async_set_hvac_mode(HVACMode.AUTO)
 
     async def async_turn_off(self) -> None:
@@ -185,7 +194,7 @@ class MtecClimate(MtecEntity, ClimateEntity):
         await self.async_set_hvac_mode(HVACMode.OFF)
 
     async def async_set_temperature(self, **kwargs: Any) -> None:
-        """Set the target temperature (writes to the day temp setpoint)."""
+        """Set the target temperature."""
         temp = kwargs.get(ATTR_TEMPERATURE)
         if temp is None:
             return
@@ -196,5 +205,18 @@ class MtecClimate(MtecEntity, ClimateEntity):
             await self.coordinator.client.async_write_value(key, float(temp))
         except MtecApiError as err:
             _LOGGER.error("Failed to set HC%d temperature: %s", self._circuit, err)
+            return
+        await self.coordinator.async_request_refresh()
+
+    async def async_set_preset_mode(self, preset_mode: str) -> None:
+        """Set the preset mode."""
+        mtec_mode = _PRESET_TO_MODE.get(preset_mode)
+        if mtec_mode is None:
+            _LOGGER.error("Unknown preset: %s", preset_mode)
+            return
+        try:
+            await self.coordinator.client.async_write_value(self._mode_key, float(mtec_mode))
+        except MtecApiError as err:
+            _LOGGER.error("Failed to set HC%d preset: %s", self._circuit, err)
             return
         await self.coordinator.async_request_refresh()
