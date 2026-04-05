@@ -24,7 +24,10 @@ async def async_setup_entry(
 ) -> None:
     """Set up M-TEC number entities."""
     coordinator: MtecDataCoordinator = entry.runtime_data
-    async_add_entities(MtecNumber(coordinator, desc) for desc in NUMBER_DESCRIPTIONS)
+    available = coordinator.client.available_keys
+    async_add_entities(
+        MtecNumber(coordinator, desc) for desc in NUMBER_DESCRIPTIONS if desc.mtec_key in available
+    )
 
 
 class MtecNumber(MtecEntity, NumberEntity):

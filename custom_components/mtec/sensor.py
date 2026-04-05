@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -27,10 +28,13 @@ async def async_setup_entry(
 ) -> None:
     """Set up M-TEC sensors."""
     coordinator: MtecDataCoordinator = entry.runtime_data
-    async_add_entities(MtecSensor(coordinator, desc) for desc in SENSOR_DESCRIPTIONS)
+    available = coordinator.client.available_keys
+    async_add_entities(
+        MtecSensor(coordinator, desc) for desc in SENSOR_DESCRIPTIONS if desc.mtec_key in available
+    )
 
 
-class MtecSensor(MtecEntity):
+class MtecSensor(MtecEntity, SensorEntity):
     """M-TEC sensor entity."""
 
     entity_description: MtecSensorEntityDescription

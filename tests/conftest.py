@@ -1,21 +1,16 @@
 """Test fixtures for M-TEC Heat Pump integration."""
+
 from __future__ import annotations
 
 import pytest
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 import respx
+from homeassistant.core import HomeAssistant
 from httpx import Response
-
-from custom_components.mtec.api import MtecApiClient
-from custom_components.mtec.const import DOMAIN
 
 
 def pytest_configure(config):
     """Configure pytest."""
-    config.addinivalue_line(
-        "markers", "asyncio: mark test as async"
-    )
+    config.addinivalue_line("markers", "asyncio: mark test as async")
 
 
 @pytest.fixture(autouse=True)
@@ -37,6 +32,7 @@ def mock_api_respx():
         # Default handler for read requests
         def read_handler(request):
             import json
+
             body = json.loads(request.content)
             response = []
             for item in body:
@@ -62,14 +58,14 @@ def mock_api_respx():
                 else:
                     response.append({"name": name, "value": "0"})
             return Response(200, json=response)
-        
+
         # Default handler for write requests
         def write_handler(request):
             return Response(200, json=[{"success": True}])
-        
+
         # Register routes
         rsps.route(method="POST", url__startswith="http://").mock(side_effect=read_handler)
-        
+
         yield rsps
 
 
@@ -82,16 +78,18 @@ def mock_api_respx_with_missing_signals():
         "APPL.CtrlAppl.sParam.param.applVersion",
         "APPL.CtrlAppl.sParam.param.systemSerialNumber",
     }
-    
+
     with respx.mock(assert_all_mocked=False) as rsps:
+
         def handler(request):
             import json
+
             body = json.loads(request.content)
             # Check if any requested signal is unavailable
             for item in body:
                 if item.get("name") not in available_signals:
                     return Response(500)
-            
+
             response = []
             for item in body:
                 name = item.get("name", "")
@@ -106,7 +104,7 @@ def mock_api_respx_with_missing_signals():
                 else:
                     response.append({"name": name, "value": "0"})
             return Response(200, json=response)
-        
+
         rsps.route(method="POST", url__startswith="http://").mock(side_effect=handler)
         yield rsps
 

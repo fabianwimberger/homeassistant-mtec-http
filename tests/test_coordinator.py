@@ -1,8 +1,9 @@
 """Tests for M-TEC coordinator."""
+
 from __future__ import annotations
 
 from datetime import timedelta
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock
 
 import pytest
 from homeassistant.core import HomeAssistant
@@ -17,7 +18,7 @@ async def test_coordinator_init(hass: HomeAssistant):
     """Test coordinator initialization."""
     client = AsyncMock(spec=MtecApiClient)
     coordinator = MtecDataCoordinator(hass, client, 30, {"firmware_version": "1.0.0"})
-    
+
     assert coordinator.client == client
     assert coordinator.update_interval == timedelta(seconds=30)
     assert coordinator.device_info_data == {"firmware_version": "1.0.0"}
@@ -28,7 +29,7 @@ async def test_coordinator_init_without_device_info(hass: HomeAssistant):
     """Test coordinator initialization without device info."""
     client = AsyncMock(spec=MtecApiClient)
     coordinator = MtecDataCoordinator(hass, client, 15)
-    
+
     assert coordinator.device_info_data == {}
 
 
@@ -39,10 +40,10 @@ async def test_coordinator_update_success(hass: HomeAssistant):
         "outdoor_temp": 15.5,
         "heating_power": 3.5,
     }
-    
+
     coordinator = MtecDataCoordinator(hass, client, 30)
     data = await coordinator._async_update_data()
-    
+
     assert data["outdoor_temp"] == 15.5
     assert data["heating_power"] == 3.5
     client.async_read_values.assert_called_once()
@@ -52,9 +53,9 @@ async def test_coordinator_update_failure(hass: HomeAssistant):
     """Test data update with API error."""
     client = AsyncMock(spec=MtecApiClient)
     client.async_read_values.side_effect = MtecApiError("Connection failed")
-    
+
     coordinator = MtecDataCoordinator(hass, client, 30)
-    
+
     with pytest.raises(UpdateFailed, match="Error fetching data"):
         await coordinator._async_update_data()
 
@@ -63,10 +64,10 @@ async def test_coordinator_update_empty_data(hass: HomeAssistant):
     """Test data update with empty response."""
     client = AsyncMock(spec=MtecApiClient)
     client.async_read_values.return_value = {}
-    
+
     coordinator = MtecDataCoordinator(hass, client, 30)
     data = await coordinator._async_update_data()
-    
+
     assert data == {}
 
 
