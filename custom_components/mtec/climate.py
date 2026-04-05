@@ -198,5 +198,3 @@ class MtecClimate(MtecEntity, ClimateEntity):
             _LOGGER.error("Failed to set HC%d temperature: %s", self._circuit, err)
             return
         await self.coordinator.async_request_refresh()
-
-
