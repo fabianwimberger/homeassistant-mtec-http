@@ -183,6 +183,9 @@ class MtecClimate(MtecEntity, ClimateEntity):
         except MtecApiError as err:
             _LOGGER.error("Failed to set HC%d mode: %s", self._circuit, err)
             return
+        if self.coordinator.data is not None:
+            self.coordinator.data[self._mode_key] = float(mtec_mode)
+            self.async_write_ha_state()
         await self.coordinator.async_request_refresh()
 
     async def async_turn_on(self) -> None:
@@ -206,6 +209,9 @@ class MtecClimate(MtecEntity, ClimateEntity):
         except MtecApiError as err:
             _LOGGER.error("Failed to set HC%d temperature: %s", self._circuit, err)
             return
+        if self.coordinator.data is not None:
+            self.coordinator.data[key] = float(temp)
+            self.async_write_ha_state()
         await self.coordinator.async_request_refresh()
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
@@ -219,4 +225,7 @@ class MtecClimate(MtecEntity, ClimateEntity):
         except MtecApiError as err:
             _LOGGER.error("Failed to set HC%d preset: %s", self._circuit, err)
             return
+        if self.coordinator.data is not None:
+            self.coordinator.data[self._mode_key] = float(mtec_mode)
+            self.async_write_ha_state()
         await self.coordinator.async_request_refresh()
