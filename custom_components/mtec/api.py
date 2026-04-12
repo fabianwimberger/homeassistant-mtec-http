@@ -98,16 +98,26 @@ class MtecApiClient:
                 continue
 
         # Filter out phantom heating circuits (flow_set_temp == 0)
+        filtered_circuits: list[str] = []
+        unfiltered_circuits: list[str] = []
         for key in list(available):
             if key.startswith("hc") and "_" in key:
                 hc_num = key.split("_")[0]  # e.g., "hc0"
                 flow_set_key = f"{hc_num}_flow_set_temp"
-                if flow_set_key in hc_flow_set_temps and hc_flow_set_temps[flow_set_key] == 0:
-                    # Remove all signals for this phantom circuit
+                if flow_set_key in hc_flow_set_temps:
+                    if hc_flow_set_temps[flow_set_key] == 0:
+                        available.discard(key)
+                        filtered_circuits.append(hc_num)
+                    else:
+                        unfiltered_circuits.append(hc_num)
+                else:
                     available.discard(key)
+                    filtered_circuits.append(hc_num)
 
         self._available_keys = available
         _LOGGER.debug("Probed %d/%d available signals", len(available), len(SIGNAL_MAP))
+        _LOGGER.debug("Filtered phantom circuits: %s", sorted(set(filtered_circuits)))
+        _LOGGER.debug("Active circuits: %s", sorted(set(unfiltered_circuits)))
         return available
 
     async def async_read_values(self, keys: list[str] | None = None) -> dict[str, float | int]:
@@ -149,6 +159,7 @@ class MtecApiClient:
             name = item.get("name")
             value = item.get("value")
             if name is None or value is None:
+                _LOGGER.debug("Skipping item with missing fields: %s", item)
                 continue
 
             key = SIGNAL_MAP_REV.get(name)
@@ -172,7 +183,7 @@ class MtecApiClient:
             raise MtecApiError(f"Unknown signal key: {key}")
 
         conv = CONVERSIONS.get(key)
-        value_str = str(int(value)) if conv and conv.__name__ == "conv_int" else str(value)
+        value_str = str(int(value)) if conv and value == int(value) else str(value)
 
         request_body = [{"name": signal_name, "value": value_str}]
 
@@ -180,7 +191,7 @@ class MtecApiClient:
             async with self._session.post(
                 f"{self._base_url}?action=set",
                 json=request_body,
-                timeout=aiohttp.ClientTimeout(total=5),
+                timeout=aiohttp.ClientTimeout(total=10),
             ) as resp:
                 if resp.status != 200:
                     raise MtecApiError(f"HTTP {resp.status} writing {key}")
