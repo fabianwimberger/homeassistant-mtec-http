@@ -195,7 +195,7 @@ class MtecApiClient:
             ) as resp:
                 if resp.status != 200:
                     raise MtecApiError(f"HTTP {resp.status} writing {key}")
-        except aiohttp.ClientError as err:
+        except (aiohttp.ClientError, TimeoutError) as err:
             raise MtecApiError(f"Connection error writing {key}: {err}") from err
 
         _LOGGER.debug("SET %s=%s", key, value_str)
