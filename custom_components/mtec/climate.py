@@ -174,7 +174,10 @@ class MtecClimate(MtecEntity, ClimateEntity):
     @property
     def target_temperature(self) -> float | None:
         """Return the target temperature."""
-        if self._optimistic_temp_key == self._room_set_temp_key and self._optimistic_temp_value is not None:
+        if (
+            self._optimistic_temp_key == self._room_set_temp_key
+            and self._optimistic_temp_value is not None
+        ):
             return float(self._optimistic_temp_value)
         if self.coordinator.data is None:
             return None
