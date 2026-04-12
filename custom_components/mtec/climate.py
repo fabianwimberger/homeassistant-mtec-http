@@ -130,9 +130,24 @@ class MtecClimate(MtecEntity, ClimateEntity):
         self._attr_name = f"HC{self._circuit} heating circuit"
         self._attr_unique_id = f"{coordinator.client.host}_hc{self._circuit}_climate"
         self._attr_icon = "mdi:radiator"
+        self._optimistic_mode: float | None = None
+        self._optimistic_temp_key: str | None = None
+        self._optimistic_temp_value: float | None = None
+
+    @property
+    def available(self) -> bool:
+        """Return True if entity is available."""
+        if not super().available:
+            return False
+        if self.coordinator.data is None:
+            return False
+        essential = [self._mode_key, self._room_temp_key, self._day_temp_key, self._night_temp_key]
+        return all(k in self.coordinator.data for k in essential)
 
     def _raw_mode(self) -> int | None:
         """Return the raw M-TEC operating mode integer."""
+        if self._optimistic_mode is not None:
+            return int(self._optimistic_mode)
         if self.coordinator.data is None:
             return None
         raw = self.coordinator.data.get(self._mode_key)
@@ -159,6 +174,8 @@ class MtecClimate(MtecEntity, ClimateEntity):
     @property
     def target_temperature(self) -> float | None:
         """Return the target temperature."""
+        if self._optimistic_temp_key == self._room_set_temp_key and self._optimistic_temp_value is not None:
+            return float(self._optimistic_temp_value)
         if self.coordinator.data is None:
             return None
         value = self.coordinator.data.get(self._room_set_temp_key)
@@ -178,15 +195,19 @@ class MtecClimate(MtecEntity, ClimateEntity):
         if mtec_mode is None:
             _LOGGER.error("Unsupported HVAC mode: %s", hvac_mode)
             return
+        self._optimistic_mode = float(mtec_mode)
+        if self.hass:
+            self.async_write_ha_state()
         try:
             await self.coordinator.client.async_write_value(self._mode_key, float(mtec_mode))
         except MtecApiError as err:
             _LOGGER.error("Failed to set HC%d mode: %s", self._circuit, err)
+            self._optimistic_mode = None
+            if self.hass:
+                self.async_write_ha_state()
             return
-        if self.coordinator.data is not None and self.hass is not None:
-            self.coordinator.data[self._mode_key] = float(mtec_mode)
-            self.async_write_ha_state()
         await self.coordinator.async_request_refresh()
+        self._optimistic_mode = None
 
     async def async_turn_on(self) -> None:
         """Turn on: set circuit to AUTO (Timer) mode."""
@@ -201,18 +222,24 @@ class MtecClimate(MtecEntity, ClimateEntity):
         temp = kwargs.get(ATTR_TEMPERATURE)
         if temp is None:
             return
-        # Write to day or night temp depending on current mode
         raw = self._raw_mode()
         key = self._night_temp_key if raw == HeatCircuitMode.NIGHT else self._day_temp_key
+        self._optimistic_temp_key = key
+        self._optimistic_temp_value = float(temp)
+        if self.hass:
+            self.async_write_ha_state()
         try:
             await self.coordinator.client.async_write_value(key, float(temp))
         except MtecApiError as err:
             _LOGGER.error("Failed to set HC%d temperature: %s", self._circuit, err)
+            self._optimistic_temp_key = None
+            self._optimistic_temp_value = None
+            if self.hass:
+                self.async_write_ha_state()
             return
-        if self.coordinator.data is not None and self.hass is not None:
-            self.coordinator.data[key] = float(temp)
-            self.async_write_ha_state()
         await self.coordinator.async_request_refresh()
+        self._optimistic_temp_key = None
+        self._optimistic_temp_value = None
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Set the preset mode."""
@@ -220,12 +247,16 @@ class MtecClimate(MtecEntity, ClimateEntity):
         if mtec_mode is None:
             _LOGGER.error("Unknown preset: %s", preset_mode)
             return
+        self._optimistic_mode = float(mtec_mode)
+        if self.hass:
+            self.async_write_ha_state()
         try:
             await self.coordinator.client.async_write_value(self._mode_key, float(mtec_mode))
         except MtecApiError as err:
             _LOGGER.error("Failed to set HC%d preset: %s", self._circuit, err)
+            self._optimistic_mode = None
+            if self.hass:
+                self.async_write_ha_state()
             return
-        if self.coordinator.data is not None and self.hass is not None:
-            self.coordinator.data[self._mode_key] = float(mtec_mode)
-            self.async_write_ha_state()
         await self.coordinator.async_request_refresh()
+        self._optimistic_mode = None
