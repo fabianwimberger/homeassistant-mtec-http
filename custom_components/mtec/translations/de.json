@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "title": "M-TEC Warmepumpe",
+        "title": "M-TEC Wärmepumpe",
         "description": "IP-Adresse oder Hostname der M-TEC Warmepumpe eingeben.",
         "data": {
           "host": "Host",
@@ -11,7 +11,7 @@
       }
     },
     "error": {
-      "cannot_connect": "Verbindung zur Warmepumpe nicht moeglich. Bitte IP-Adresse pruefen."
+      "cannot_connect": "Verbindung zur Warmepumpe nicht möglich. Bitte IP-Adresse prüfen."
     },
     "abort": {
       "already_configured": "Diese Warmepumpe ist bereits konfiguriert.",
@@ -30,37 +30,37 @@
   },
   "entity": {
     "binary_sensor": {
-      "buffer_heat_request": { "name": "Pufferspeicher Waermeanforderung" },
-      "buffer_cool_request": { "name": "Pufferspeicher Kuehlanforderung" },
+      "buffer_heat_request": { "name": "Pufferspeicher Wärmeanforderung" },
+      "buffer_cool_request": { "name": "Pufferspeicher Kühlanforderung" },
       "hot_water_heat_request": { "name": "Warmwasser Waermeanforderung" },
       "hot_water_pump": { "name": "Warmwasserpumpe" },
       "hot_water_circ_pump": { "name": "Warmwasser Zirkulationspumpe" },
-      "pv_excess_energy": { "name": "PV Ueberschussenergie" },
+      "pv_excess_energy": { "name": "PV Überschussenergie" },
       "ext_heat_source": { "name": "Externe Waermequelle" },
       "screed_drying_active": { "name": "Estrichtrocknung" }
     },
     "sensor": {
-      "outdoor_temp": { "name": "Aussentemperatur" },
+      "outdoor_temp": { "name": "Außentemperatur" },
       "heating_power": { "name": "Heizleistung" },
       "electrical_power": { "name": "Elektrische Leistung" },
-      "heatpump_state": { "name": "Waermepumpe Status" },
+      "heatpump_state": { "name": "Wärmepumpe Status" },
       "temp_vaporizer": { "name": "Verdampfertemperatur" },
       "temp_condenser": { "name": "Kondensatortemperatur" },
       "temp_heat_flow": { "name": "Vorlauftemperatur" },
-      "temp_heat_return": { "name": "Ruecklauftemperatur" },
+      "temp_heat_return": { "name": "Rücklauftemperatur" },
       "temp_source_in": { "name": "Quelleneintrittstemperatur" },
       "temp_source_out": { "name": "Quellenaustrittstemperatur" },
-      "circ_pump": { "name": "Umwaelzpumpe" },
+      "circ_pump": { "name": "Umwälzpumpe" },
       "compressor": { "name": "Kompressor" },
-      "fan": { "name": "Luefter" },
+      "fan": { "name": "Lüfter" },
       "mass_flow": { "name": "Massenstrom" },
       "operating_hours": { "name": "Betriebsstunden" },
       "total_heating_energy": { "name": "Gesamte Heizenergie" },
       "total_electrical_energy": { "name": "Gesamte elektrische Energie" },
       "temp_compressor_in": { "name": "Kompressor Eintrittstemperatur" },
       "temp_compressor_out": { "name": "Kompressor Austrittstemperatur" },
-      "superheat_actual": { "name": "Ueberhitzung Ist" },
-      "superheat_set": { "name": "Ueberhitzung Soll" },
+      "superheat_actual": { "name": "Überhitzung Ist" },
+      "superheat_set": { "name": "Überhitzung Soll" },
       "low_pressure": { "name": "Niederdruck" },
       "high_pressure": { "name": "Hochdruck" },
       "cop": { "name": "COP" },
@@ -86,6 +86,9 @@
       "system_operating_mode": { "name": "Betriebsmodus" },
       "hot_water_mode": { "name": "Warmwasser-Modus" },
       "sg_ready_mode": { "name": "SG Ready Modus" }
+    },
+    "climate": {
+      "hc_climate": { "name": "Heizkreis {circuit_id}" }
     }
   }
 }
