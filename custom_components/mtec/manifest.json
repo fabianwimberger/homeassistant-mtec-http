@@ -5,7 +5,7 @@
   "config_flow": true,
   "integration_type": "device",
   "iot_class": "local_polling",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "requirements": ["aiohttp>=3.9.0"],
   "documentation": "https://github.com/fabianwimberger/homeassistant-mtec-http",
   "issue_tracker": "https://github.com/fabianwimberger/homeassistant-mtec-http/issues"
