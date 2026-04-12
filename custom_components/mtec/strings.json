@@ -86,6 +86,9 @@
       "system_operating_mode": { "name": "System operating mode" },
       "hot_water_mode": { "name": "Hot water mode" },
       "sg_ready_mode": { "name": "SG Ready mode" }
+    },
+    "climate": {
+      "hc_climate": { "name": "Heating circuit {circuit_id}" }
     }
   }
 }
