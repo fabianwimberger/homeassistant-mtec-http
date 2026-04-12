@@ -9,7 +9,10 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
     HEATPUMP_STATE_OPTIONS,
+    HOT_WATER_MODE_OPTIONS,
     SENSOR_DESCRIPTIONS,
+    SG_READY_MODE_OPTIONS,
+    SYSTEM_OPERATING_MODE_OPTIONS,
     MtecSensorEntityDescription,
 )
 from .coordinator import MtecDataCoordinator
@@ -18,6 +21,9 @@ from .entity import MtecEntity
 # Sensors whose raw int value should be mapped to a human-readable string
 _ENUM_SENSORS: dict[str, dict[int, str]] = {
     "heatpump_state": HEATPUMP_STATE_OPTIONS,  # type: ignore[dict-item]
+    "system_operating_mode": SYSTEM_OPERATING_MODE_OPTIONS,  # type: ignore[dict-item]
+    "hot_water_mode": HOT_WATER_MODE_OPTIONS,  # type: ignore[dict-item]
+    "sg_ready_mode": SG_READY_MODE_OPTIONS,  # type: ignore[dict-item]
 }
 
 
