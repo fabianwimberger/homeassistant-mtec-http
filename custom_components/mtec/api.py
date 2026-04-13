@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import contextlib
 import logging
+import re
 
 import aiohttp
 
@@ -100,9 +101,11 @@ class MtecApiClient:
         # Filter out phantom heating circuits (flow_set_temp == 0)
         filtered_circuits: list[str] = []
         unfiltered_circuits: list[str] = []
+        _hc_re = re.compile(r"^(hc\d+)_")
         for key in list(available):
-            if key.startswith("hc") and "_" in key:
-                hc_num = key.split("_")[0]  # e.g., "hc0"
+            match = _hc_re.match(key)
+            if match:
+                hc_num = match.group(1)
                 flow_set_key = f"{hc_num}_flow_set_temp"
                 if flow_set_key in hc_flow_set_temps:
                     if hc_flow_set_temps[flow_set_key] == 0:
