@@ -16,7 +16,13 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .api import MtecApiError
-from .const import MAX_HEAT_CIRCUITS, HeatCircuitMode
+from .const import (
+    CLIMATE_TEMP_MAX,
+    CLIMATE_TEMP_MIN,
+    CLIMATE_TEMP_STEP,
+    MAX_HEAT_CIRCUITS,
+    HeatCircuitMode,
+)
 from .coordinator import MtecDataCoordinator
 from .entity import MtecEntity
 
@@ -109,9 +115,9 @@ class MtecClimate(MtecEntity, ClimateEntity):
         | ClimateEntityFeature.TURN_ON
         | ClimateEntityFeature.TURN_OFF
     )
-    _attr_target_temperature_step = 0.5
-    _attr_min_temp = 10.0
-    _attr_max_temp = 30.0
+    _attr_target_temperature_step = CLIMATE_TEMP_STEP
+    _attr_min_temp = CLIMATE_TEMP_MIN
+    _attr_max_temp = CLIMATE_TEMP_MAX
     _enable_turn_on_off_backwards_compat = False
 
     def __init__(

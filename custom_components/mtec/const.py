@@ -39,6 +39,12 @@ API_ENDPOINT = "/var/readWriteVars"
 TIMEOUT_DEFAULT = 10
 TIMEOUT_READ = 15
 
+# --- Climate defaults ---
+
+CLIMATE_TEMP_MIN = 10.0
+CLIMATE_TEMP_MAX = 30.0
+CLIMATE_TEMP_STEP = 0.5
+
 # --- Signals read once at setup for device info ---
 
 DEVICE_INFO_SIGNALS: dict[str, str] = {
