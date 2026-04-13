@@ -8,7 +8,14 @@ import re
 
 import aiohttp
 
-from .const import CONVERSIONS, SIGNAL_MAP, SIGNAL_MAP_REV, TIMEOUT_DEFAULT, TIMEOUT_READ
+from .const import (
+    API_ENDPOINT,
+    CONVERSIONS,
+    SIGNAL_MAP,
+    SIGNAL_MAP_REV,
+    TIMEOUT_DEFAULT,
+    TIMEOUT_READ,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -23,7 +30,7 @@ class MtecApiClient:
     def __init__(self, host: str, session: aiohttp.ClientSession) -> None:
         self._host = host
         self._session = session
-        self._base_url = f"http://{host}/var/readWriteVars"
+        self._base_url = f"http://{host}{API_ENDPOINT}"
         self._available_keys: set[str] | None = None
 
     @property
