@@ -21,7 +21,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=8.2.0",
-    "pytest-aiohttp>=1.0.5",
+    "pytest-aiohttp>=1.1.0",
     "pytest-homeassistant-custom-component==0.13.316",
     "pytest-cov>=5.0.0",
     "aioresponses>=0.7.8",
