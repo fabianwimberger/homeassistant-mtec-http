@@ -72,17 +72,11 @@ async def test_setup_creates_entities(hass: HomeAssistant) -> None:
                 body = json.loads(raw) if raw else []
             name = body[0]["name"] if body else ""
             if "outdoorTemp" in name:
-                return CallbackResult(
-                    status=200, payload=[{"name": name, "value": "15.5"}]
-                )
+                return CallbackResult(status=200, payload=[{"name": name, "value": "15.5"}])
             if "applVersion" in name:
-                return CallbackResult(
-                    status=200, payload=[{"name": name, "value": "1.0.0"}]
-                )
+                return CallbackResult(status=200, payload=[{"name": name, "value": "1.0.0"}])
             if "systemSerialNumber" in name:
-                return CallbackResult(
-                    status=200, payload=[{"name": name, "value": "SN123"}]
-                )
+                return CallbackResult(status=200, payload=[{"name": name, "value": "SN123"}])
             return CallbackResult(status=500)
 
         # Register enough calls for probing + device info + first refresh
@@ -118,17 +112,11 @@ async def test_setup_skips_unavailable_signals(hass: HomeAssistant) -> None:
                 body = json.loads(raw) if raw else []
             name = body[0]["name"] if body else ""
             if "outdoorTemp" in name:
-                return CallbackResult(
-                    status=200, payload=[{"name": name, "value": "15.5"}]
-                )
+                return CallbackResult(status=200, payload=[{"name": name, "value": "15.5"}])
             if "applVersion" in name:
-                return CallbackResult(
-                    status=200, payload=[{"name": name, "value": "1.0.0"}]
-                )
+                return CallbackResult(status=200, payload=[{"name": name, "value": "1.0.0"}])
             if "systemSerialNumber" in name:
-                return CallbackResult(
-                    status=200, payload=[{"name": name, "value": "SN123"}]
-                )
+                return CallbackResult(status=200, payload=[{"name": name, "value": "SN123"}])
             return CallbackResult(status=500)
 
         for _ in range(200):
