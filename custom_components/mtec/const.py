@@ -34,6 +34,11 @@ DEFAULT_SCAN_INTERVAL = 15
 
 API_ENDPOINT = "/var/readWriteVars"
 
+# --- HTTP timeout defaults (seconds) ---
+
+TIMEOUT_DEFAULT = 10
+TIMEOUT_READ = 15
+
 # --- Signals read once at setup for device info ---
 
 DEVICE_INFO_SIGNALS: dict[str, str] = {

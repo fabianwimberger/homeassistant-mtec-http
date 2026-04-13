@@ -7,7 +7,7 @@ import logging
 
 import aiohttp
 
-from .const import CONVERSIONS, SIGNAL_MAP, SIGNAL_MAP_REV
+from .const import CONVERSIONS, SIGNAL_MAP, SIGNAL_MAP_REV, TIMEOUT_DEFAULT, TIMEOUT_READ
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -53,7 +53,7 @@ class MtecApiClient:
                 async with self._session.post(
                     self._base_url,
                     json=[{"name": signal_name}],
-                    timeout=aiohttp.ClientTimeout(total=10),
+                    timeout=aiohttp.ClientTimeout(total=TIMEOUT_DEFAULT),
                 ) as resp:
                     if resp.status != 200:
                         continue
@@ -84,7 +84,7 @@ class MtecApiClient:
                 async with self._session.post(
                     self._base_url,
                     json=[{"name": signal_name}],
-                    timeout=aiohttp.ClientTimeout(total=10),
+                    timeout=aiohttp.ClientTimeout(total=TIMEOUT_DEFAULT),
                 ) as resp:
                     if resp.status == 200:
                         data = await resp.json()
@@ -144,7 +144,7 @@ class MtecApiClient:
             async with self._session.post(
                 self._base_url,
                 json=request_body,
-                timeout=aiohttp.ClientTimeout(total=15),
+                timeout=aiohttp.ClientTimeout(total=TIMEOUT_READ),
             ) as resp:
                 if resp.status != 200:
                     raise MtecApiError(f"HTTP {resp.status}")
@@ -191,7 +191,7 @@ class MtecApiClient:
             async with self._session.post(
                 f"{self._base_url}?action=set",
                 json=request_body,
-                timeout=aiohttp.ClientTimeout(total=10),
+                timeout=aiohttp.ClientTimeout(total=TIMEOUT_DEFAULT),
             ) as resp:
                 if resp.status != 200:
                     raise MtecApiError(f"HTTP {resp.status} writing {key}")
