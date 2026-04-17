@@ -31,8 +31,21 @@ CONF_HOST = "host"
 CONF_SCAN_INTERVAL = "scan_interval"
 DEFAULT_HOST = "192.168.1.100"
 DEFAULT_SCAN_INTERVAL = 15
+MIN_SCAN_INTERVAL = 5
+MAX_SCAN_INTERVAL = 300
 
 API_ENDPOINT = "/var/readWriteVars"
+
+# --- HTTP timeout defaults (seconds) ---
+
+TIMEOUT_DEFAULT = 10
+TIMEOUT_READ = 15
+
+# --- Climate defaults ---
+
+CLIMATE_TEMP_MIN = 10.0
+CLIMATE_TEMP_MAX = 30.0
+CLIMATE_TEMP_STEP = 0.5
 
 # --- Signals read once at setup for device info ---
 
@@ -771,7 +784,7 @@ SELECT_DESCRIPTIONS: tuple[MtecSelectEntityDescription, ...] = (
         key="system_operating_mode",
         mtec_key="system_operating_mode",
         translation_key="system_operating_mode",
-        options_map=SYSTEM_OPERATING_MODE_OPTIONS,  # type: ignore[arg-type]
+        options_map=SYSTEM_OPERATING_MODE_OPTIONS,  # type: ignore[arg-type]  # IntEnum key
         options=list(SYSTEM_OPERATING_MODE_OPTIONS.values()),
         icon="mdi:cog",
     ),
@@ -779,7 +792,7 @@ SELECT_DESCRIPTIONS: tuple[MtecSelectEntityDescription, ...] = (
         key="hot_water_mode",
         mtec_key="hot_water_mode",
         translation_key="hot_water_mode",
-        options_map=HOT_WATER_MODE_OPTIONS,  # type: ignore[arg-type]
+        options_map=HOT_WATER_MODE_OPTIONS,  # type: ignore[arg-type]  # IntEnum key
         options=list(HOT_WATER_MODE_OPTIONS.values()),
         icon="mdi:water-boiler",
     ),
@@ -787,7 +800,7 @@ SELECT_DESCRIPTIONS: tuple[MtecSelectEntityDescription, ...] = (
         key="sg_ready_mode",
         mtec_key="sg_ready_mode",
         translation_key="sg_ready_mode",
-        options_map=SG_READY_MODE_OPTIONS,  # type: ignore[arg-type]
+        options_map=SG_READY_MODE_OPTIONS,  # type: ignore[arg-type]  # IntEnum key
         options=list(SG_READY_MODE_OPTIONS.values()),
         icon="mdi:transmission-tower",
     ),
@@ -928,7 +941,7 @@ for _i in range(MAX_HEAT_CIRCUITS):
             key=f"{_p}_mode",
             mtec_key=f"{_p}_mode",
             name=f"{_n} operating mode",
-            options_map=HEAT_CIRCUIT_MODE_OPTIONS,  # type: ignore[arg-type]
+            options_map=HEAT_CIRCUIT_MODE_OPTIONS,  # type: ignore[arg-type]  # IntEnum key
             options=list(HEAT_CIRCUIT_MODE_OPTIONS.values()),
             icon="mdi:radiator",
         ),

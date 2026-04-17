@@ -20,10 +20,10 @@ from .entity import MtecEntity
 
 # Sensors whose raw int value should be mapped to a human-readable string
 _ENUM_SENSORS: dict[str, dict[int, str]] = {
-    "heatpump_state": HEATPUMP_STATE_OPTIONS,  # type: ignore[dict-item]
-    "system_operating_mode": SYSTEM_OPERATING_MODE_OPTIONS,  # type: ignore[dict-item]
-    "hot_water_mode": HOT_WATER_MODE_OPTIONS,  # type: ignore[dict-item]
-    "sg_ready_mode": SG_READY_MODE_OPTIONS,  # type: ignore[dict-item]
+    "heatpump_state": HEATPUMP_STATE_OPTIONS,  # type: ignore[dict-item]  # IntEnum key
+    "system_operating_mode": SYSTEM_OPERATING_MODE_OPTIONS,  # type: ignore[dict-item]  # IntEnum key
+    "hot_water_mode": HOT_WATER_MODE_OPTIONS,  # type: ignore[dict-item]  # IntEnum key
+    "sg_ready_mode": SG_READY_MODE_OPTIONS,  # type: ignore[dict-item]  # IntEnum key
 }
 
 

@@ -4,10 +4,18 @@ from __future__ import annotations
 
 import contextlib
 import logging
+import re
 
 import aiohttp
 
-from .const import CONVERSIONS, SIGNAL_MAP, SIGNAL_MAP_REV
+from .const import (
+    API_ENDPOINT,
+    CONVERSIONS,
+    SIGNAL_MAP,
+    SIGNAL_MAP_REV,
+    TIMEOUT_DEFAULT,
+    TIMEOUT_READ,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -22,7 +30,7 @@ class MtecApiClient:
     def __init__(self, host: str, session: aiohttp.ClientSession) -> None:
         self._host = host
         self._session = session
-        self._base_url = f"http://{host}/var/readWriteVars"
+        self._base_url = f"http://{host}{API_ENDPOINT}"
         self._available_keys: set[str] | None = None
 
     @property
@@ -53,7 +61,7 @@ class MtecApiClient:
                 async with self._session.post(
                     self._base_url,
                     json=[{"name": signal_name}],
-                    timeout=aiohttp.ClientTimeout(total=10),
+                    timeout=aiohttp.ClientTimeout(total=TIMEOUT_DEFAULT),
                 ) as resp:
                     if resp.status != 200:
                         continue
@@ -84,7 +92,7 @@ class MtecApiClient:
                 async with self._session.post(
                     self._base_url,
                     json=[{"name": signal_name}],
-                    timeout=aiohttp.ClientTimeout(total=10),
+                    timeout=aiohttp.ClientTimeout(total=TIMEOUT_DEFAULT),
                 ) as resp:
                     if resp.status == 200:
                         data = await resp.json()
@@ -100,9 +108,11 @@ class MtecApiClient:
         # Filter out phantom heating circuits (flow_set_temp == 0)
         filtered_circuits: list[str] = []
         unfiltered_circuits: list[str] = []
+        _hc_re = re.compile(r"^(hc\d+)_")
         for key in list(available):
-            if key.startswith("hc") and "_" in key:
-                hc_num = key.split("_")[0]  # e.g., "hc0"
+            match = _hc_re.match(key)
+            if match:
+                hc_num = match.group(1)
                 flow_set_key = f"{hc_num}_flow_set_temp"
                 if flow_set_key in hc_flow_set_temps:
                     if hc_flow_set_temps[flow_set_key] == 0:
@@ -144,7 +154,7 @@ class MtecApiClient:
             async with self._session.post(
                 self._base_url,
                 json=request_body,
-                timeout=aiohttp.ClientTimeout(total=15),
+                timeout=aiohttp.ClientTimeout(total=TIMEOUT_READ),
             ) as resp:
                 if resp.status != 200:
                     raise MtecApiError(f"HTTP {resp.status}")
@@ -191,7 +201,7 @@ class MtecApiClient:
             async with self._session.post(
                 f"{self._base_url}?action=set",
                 json=request_body,
-                timeout=aiohttp.ClientTimeout(total=10),
+                timeout=aiohttp.ClientTimeout(total=TIMEOUT_DEFAULT),
             ) as resp:
                 if resp.status != 200:
                     raise MtecApiError(f"HTTP {resp.status} writing {key}")

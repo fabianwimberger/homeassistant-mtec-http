@@ -21,6 +21,8 @@ from .const import (
     DEFAULT_HOST,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
+    MAX_SCAN_INTERVAL,
+    MIN_SCAN_INTERVAL,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -29,13 +31,13 @@ DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_HOST, default=DEFAULT_HOST): str,
         vol.Optional(CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL): vol.All(
-            int, vol.Range(min=5, max=300)
+            int, vol.Range(min=MIN_SCAN_INTERVAL, max=MAX_SCAN_INTERVAL)
         ),
     }
 )
 
 
-class MtecConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg]
+class MtecConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg]  # HA metaclass
     """Handle a config flow for M-TEC Heat Pump."""
 
     VERSION = 1
@@ -120,7 +122,7 @@ class MtecOptionsFlow(OptionsFlow):
             data_schema=vol.Schema(
                 {
                     vol.Optional(CONF_SCAN_INTERVAL, default=current_interval): vol.All(
-                        int, vol.Range(min=5, max=300)
+                        int, vol.Range(min=MIN_SCAN_INTERVAL, max=MAX_SCAN_INTERVAL)
                     ),
                 }
             ),
