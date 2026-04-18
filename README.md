@@ -8,15 +8,9 @@
 
 Custom integration for [Home Assistant](https://www.home-assistant.io/) that communicates directly with M-TEC heat pumps via their built-in HTTP API (`/var/readWriteVars`). No MQTT broker or middleman needed.
 
-## Why This Project?
+## Background
 
-M-TEC heat pumps expose a rich set of operational data and controls via their local HTTP API, but there's no native Home Assistant integration. Existing solutions require additional hardware, MQTT brokers, or custom scripting. This integration provides a plug-and-play solution that auto-discovers available sensors based on your specific heat pump configuration.
-
-**Goals:**
-- Provide native Home Assistant integration for M-TEC heat pumps
-- Auto-discover available sensors (different units have different capabilities)
-- Support both monitoring and control (climate, setpoints, operating modes)
-- Integrate with HA Energy Dashboard for consumption tracking
+M-TEC heat pumps expose a local HTTP API, but there is no native Home Assistant integration for it. Existing options rely on MQTT bridges or extra hardware. This talks to the pump directly, auto-discovers which signals the unit supports, and exposes them as HA entities including climate controls and energy-dashboard sensors.
 
 ## Features
 
