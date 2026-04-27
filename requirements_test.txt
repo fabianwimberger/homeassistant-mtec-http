@@ -11,7 +11,7 @@ pytest-cov>=5.0.0
 pytest-homeassistant-custom-component==0.13.316
 
 # HA core (for type checking and imports)
-homeassistant>=2025.1.0
+homeassistant>=2026.2.3
 
 # HTTP client (match manifest.json)
 aiohttp>=3.9.0
