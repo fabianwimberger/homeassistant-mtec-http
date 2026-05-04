@@ -14,7 +14,7 @@ pytest-homeassistant-custom-component==0.13.316
 homeassistant==2026.2.3
 
 # HTTP client (match manifest.json)
-aiohttp==3.13.3
+aiohttp==3.13.5
 
 # HTTP mocking for tests
 aioresponses==0.7.8
