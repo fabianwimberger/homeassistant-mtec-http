@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import contextlib
+import json
 import logging
 import re
 
@@ -68,7 +69,7 @@ class MtecApiClient:
                     data = await resp.json()
                     if data and isinstance(data, list) and "value" in data[0]:
                         result[key] = str(data[0]["value"])
-            except (aiohttp.ClientError, TimeoutError):
+            except (aiohttp.ClientError, TimeoutError, json.JSONDecodeError):
                 continue
         return result
 
@@ -102,7 +103,7 @@ class MtecApiClient:
                             if "_flow_set_temp" in key:
                                 with contextlib.suppress(ValueError, TypeError):
                                     hc_flow_set_temps[key] = float(data[0]["value"])
-            except (aiohttp.ClientError, TimeoutError):
+            except (aiohttp.ClientError, TimeoutError, json.JSONDecodeError):
                 continue
 
         # Filter out phantom heating circuits (flow_set_temp == 0)
@@ -163,6 +164,13 @@ class MtecApiClient:
             raise MtecApiError(f"Connection error: {err}") from err
         except TimeoutError as err:
             raise MtecApiError(f"Timeout connecting to {self._host}") from err
+        except json.JSONDecodeError as err:
+            raise MtecApiError(f"Invalid JSON: {err}") from err
+
+        if not isinstance(response_data, list):
+            raise MtecApiError(
+                f"Unexpected response format: expected list, got {type(response_data).__name__}"
+            )
 
         result: dict[str, float | int] = {}
         for item in response_data:
