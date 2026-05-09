@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import contextlib
 import json
 import logging
@@ -19,6 +20,9 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
+
+PROBE_CONCURRENCY = 16
+_HC_KEY_RE = re.compile(r"^(hc\d+)_")
 
 
 class MtecApiError(Exception):
@@ -85,50 +89,63 @@ class MtecApiClient:
         if self._available_keys is not None:
             return self._available_keys
 
+        semaphore = asyncio.Semaphore(PROBE_CONCURRENCY)
+
+        async def probe_signal(key: str, signal_name: str) -> tuple[str, float] | None:
+            async with semaphore:
+                value: float | None = None
+                matched = False
+                request_body = [{"name": signal_name}]
+                timeout = aiohttp.ClientTimeout(total=TIMEOUT_DEFAULT)
+                try:
+                    async with self._session.post(
+                        self._base_url,
+                        json=request_body,
+                        timeout=timeout,
+                    ) as resp:
+                        if resp.status == 200:
+                            data = await resp.json()
+                            if data and isinstance(data, list) and "value" in data[0]:
+                                matched = True
+                                with contextlib.suppress(ValueError, TypeError):
+                                    value = float(data[0]["value"])
+                except (aiohttp.ClientError, TimeoutError, json.JSONDecodeError):
+                    return None
+                if matched:
+                    return key, value if value is not None else 0.0
+                return None
+
+        probe_results = await asyncio.gather(
+            *(probe_signal(key, signal_name) for key, signal_name in SIGNAL_MAP.items())
+        )
+
         available: set[str] = set()
         hc_flow_set_temps: dict[str, float] = {}
-
-        for key, signal_name in SIGNAL_MAP.items():
-            try:
-                async with self._session.post(
-                    self._base_url,
-                    json=[{"name": signal_name}],
-                    timeout=aiohttp.ClientTimeout(total=TIMEOUT_DEFAULT),
-                ) as resp:
-                    if resp.status == 200:
-                        data = await resp.json()
-                        if data and isinstance(data, list) and "value" in data[0]:
-                            available.add(key)
-                            # Track flow_set_temp values for heat circuit detection
-                            if "_flow_set_temp" in key:
-                                with contextlib.suppress(ValueError, TypeError):
-                                    hc_flow_set_temps[key] = float(data[0]["value"])
-            except (aiohttp.ClientError, TimeoutError, json.JSONDecodeError):
+        for result in probe_results:
+            if result is None:
                 continue
+            key, value = result
+            available.add(key)
+            if key.endswith("_flow_set_temp"):
+                hc_flow_set_temps[key] = value
 
-        # Filter out phantom heating circuits (flow_set_temp == 0)
-        filtered_circuits: list[str] = []
-        unfiltered_circuits: list[str] = []
-        _hc_re = re.compile(r"^(hc\d+)_")
+        filtered_circuits: set[str] = set()
+        unfiltered_circuits: set[str] = set()
         for key in list(available):
-            match = _hc_re.match(key)
+            match = _HC_KEY_RE.match(key)
             if match:
                 hc_num = match.group(1)
                 flow_set_key = f"{hc_num}_flow_set_temp"
-                if flow_set_key in hc_flow_set_temps:
-                    if hc_flow_set_temps[flow_set_key] == 0:
-                        available.discard(key)
-                        filtered_circuits.append(hc_num)
-                    else:
-                        unfiltered_circuits.append(hc_num)
-                else:
+                if flow_set_key in hc_flow_set_temps and hc_flow_set_temps[flow_set_key] == 0:
                     available.discard(key)
-                    filtered_circuits.append(hc_num)
+                    filtered_circuits.add(hc_num)
+                else:
+                    unfiltered_circuits.add(hc_num)
 
         self._available_keys = available
         _LOGGER.debug("Probed %d/%d available signals", len(available), len(SIGNAL_MAP))
-        _LOGGER.debug("Filtered phantom circuits: %s", sorted(set(filtered_circuits)))
-        _LOGGER.debug("Active circuits: %s", sorted(set(unfiltered_circuits)))
+        _LOGGER.debug("Filtered phantom circuits: %s", sorted(filtered_circuits))
+        _LOGGER.debug("Active circuits: %s", sorted(unfiltered_circuits))
         return available
 
     async def async_read_values(self, keys: list[str] | None = None) -> dict[str, float | int]:

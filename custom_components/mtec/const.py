@@ -180,7 +180,7 @@ def conv_mass_flow(v: float) -> float:
 
 def conv_watts_kw(v: float) -> float:
     """Convert watts to kilowatts."""
-    return round(v) / 1000
+    return round(v / 1000, 3)
 
 
 def conv_bar(v: float) -> float:

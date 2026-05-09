@@ -98,6 +98,7 @@ def test_conv_mass_flow(value: float, expected: float) -> None:
     [
         (1000.0, 1.0),
         (1500.0, 1.5),
+        (1.5, 0.002),
         (0.0, 0.0),
         (999.4, 0.999),
     ],
