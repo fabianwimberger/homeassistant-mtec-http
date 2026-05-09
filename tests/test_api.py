@@ -316,6 +316,32 @@ async def test_probe_phantom_heat_circuits_filtered(hass: HomeAssistant) -> None
             assert sig not in available, f"Expected {sig} to be filtered out"
 
 
+async def test_probe_keeps_heat_circuit_when_flow_set_temp_missing(hass: HomeAssistant) -> None:
+    """Test that missing flow_set_temp does not hide an otherwise available circuit."""
+    with aioresponses() as m:
+
+        def callback(url: str, **kwargs: Any) -> CallbackResult:
+            request_data = kwargs.get("json")
+            signal_name = request_data[0]["name"] if request_data else ""
+            key = next((k for k, v in SIGNAL_MAP.items() if v == signal_name), None)
+            if key == "hc0_flow_set_temp":
+                return CallbackResult(status=500)
+            if key and key.startswith("hc0_"):
+                return CallbackResult(payload=[{"name": signal_name, "value": "1"}])
+            return CallbackResult(status=500)
+
+        m.post("http://192.168.1.100/var/readWriteVars", callback=callback, repeat=True)
+
+        session = async_get_clientsession(hass)
+        client = MtecApiClient("192.168.1.100", session)
+
+        available = await client.async_probe_available_keys()
+
+        assert "hc0_mode" in available
+        assert "hc0_room_temp" in available
+        assert "hc0_flow_set_temp" not in available
+
+
 async def test_read_values_invalid_json(hass: HomeAssistant) -> None:
     """Test that invalid JSON raises MtecApiError."""
     with aioresponses() as m:
