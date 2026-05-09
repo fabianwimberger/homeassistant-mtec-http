@@ -314,3 +314,69 @@ async def test_probe_phantom_heat_circuits_filtered(hass: HomeAssistant) -> None
         hc2_signals = get_hc_signals(2)
         for sig in hc2_signals:
             assert sig not in available, f"Expected {sig} to be filtered out"
+
+
+async def test_read_values_invalid_json(hass: HomeAssistant) -> None:
+    """Test that invalid JSON raises MtecApiError."""
+    with aioresponses() as m:
+        m.post(
+            "http://192.168.1.100/var/readWriteVars",
+            status=200,
+            body="not valid json",
+            content_type="application/json",
+        )
+        session = async_get_clientsession(hass)
+        client = MtecApiClient("192.168.1.100", session)
+        client._available_keys = {"outdoor_temp"}
+
+        with pytest.raises(MtecApiError, match="Invalid JSON"):
+            await client.async_read_values(["outdoor_temp"])
+
+
+async def test_read_values_unexpected_format(hass: HomeAssistant) -> None:
+    """Test that non-list response raises MtecApiError."""
+    with aioresponses() as m:
+        m.post(
+            "http://192.168.1.100/var/readWriteVars",
+            payload={"error": "unexpected"},
+        )
+        session = async_get_clientsession(hass)
+        client = MtecApiClient("192.168.1.100", session)
+        client._available_keys = {"outdoor_temp"}
+
+        with pytest.raises(MtecApiError, match="Unexpected response format"):
+            await client.async_read_values(["outdoor_temp"])
+
+
+async def test_probe_available_keys_invalid_json(hass: HomeAssistant) -> None:
+    """Test that invalid JSON during probing is silently skipped."""
+    with aioresponses() as m:
+        m.post(
+            "http://192.168.1.100/var/readWriteVars",
+            status=200,
+            body="not valid json",
+            content_type="application/json",
+        )
+        session = async_get_clientsession(hass)
+        client = MtecApiClient("192.168.1.100", session)
+
+        # Should not raise; returns empty set since all probes fail
+        available = await client.async_probe_available_keys()
+        assert available == set()
+
+
+async def test_read_device_info_invalid_json(hass: HomeAssistant) -> None:
+    """Test that invalid JSON during device info read is silently skipped."""
+    with aioresponses() as m:
+        m.post(
+            "http://192.168.1.100/var/readWriteVars",
+            status=200,
+            body="not valid json",
+            content_type="application/json",
+        )
+        session = async_get_clientsession(hass)
+        client = MtecApiClient("192.168.1.100", session)
+
+        signals = {"firmware_version": "APPL.CtrlAppl.sParam.param.applVersion"}
+        result = await client.async_read_device_info(signals)
+        assert result == {}
