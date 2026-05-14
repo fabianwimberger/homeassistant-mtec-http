@@ -30,9 +30,23 @@ async def test_config_flow_init(hass: HomeAssistant) -> None:
 
 async def test_config_flow_success(hass: HomeAssistant) -> None:
     """Test successful config flow."""
-    with patch(
-        "custom_components.mtec.config_flow.MtecApiClient.async_validate_connection",
-        return_value=True,
+    with (
+        patch(
+            "custom_components.mtec.config_flow.MtecApiClient.async_validate_connection",
+            return_value=True,
+        ),
+        patch(
+            "custom_components.mtec.api.MtecApiClient.async_probe_available_keys",
+            return_value={"outdoor_temp"},
+        ),
+        patch(
+            "custom_components.mtec.api.MtecApiClient.async_read_device_info",
+            return_value={},
+        ),
+        patch(
+            "custom_components.mtec.coordinator.MtecDataCoordinator._async_update_data",
+            return_value={"outdoor_temp": 15.5},
+        ),
     ):
         result = await hass.config_entries.flow.async_init(
             DOMAIN,
@@ -75,9 +89,23 @@ async def test_config_flow_duplicate(hass: HomeAssistant) -> None:
     entry = hass.config_entries.async_entry_for_domain_unique_id(DOMAIN, "192.168.1.100")
     if entry is None:
         # Mock existing entry
-        with patch(
-            "custom_components.mtec.config_flow.MtecApiClient.async_validate_connection",
-            return_value=True,
+        with (
+            patch(
+                "custom_components.mtec.config_flow.MtecApiClient.async_validate_connection",
+                return_value=True,
+            ),
+            patch(
+                "custom_components.mtec.api.MtecApiClient.async_probe_available_keys",
+                return_value={"outdoor_temp"},
+            ),
+            patch(
+                "custom_components.mtec.api.MtecApiClient.async_read_device_info",
+                return_value={},
+            ),
+            patch(
+                "custom_components.mtec.coordinator.MtecDataCoordinator._async_update_data",
+                return_value={"outdoor_temp": 15.5},
+            ),
         ):
             result = await hass.config_entries.flow.async_init(
                 DOMAIN,
