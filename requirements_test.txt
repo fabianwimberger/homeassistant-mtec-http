@@ -1,20 +1,20 @@
 # Test dependencies for Home Assistant integration
-# Compatible with Home Assistant 2025.x
+# Compatible with Home Assistant 2026.5.x
 
 # Core testing
-pytest==9.0.0
+pytest==9.0.3
 pytest-aiohttp==1.1.0
-pytest-cov==7.0.0
+pytest-cov==7.1.0
 
 # Home Assistant testing framework
 # Pin to specific version matching HA core
-pytest-homeassistant-custom-component==0.13.316
+pytest-homeassistant-custom-component==0.13.330
 
 # HA core (for type checking and imports)
-homeassistant==2026.2.3
+homeassistant==2026.5.1
 
 # HTTP client (match manifest.json)
-aiohttp==3.13.3
+aiohttp==3.13.5
 
 # HTTP mocking for tests
 aioresponses==0.7.8
