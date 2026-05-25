@@ -20,5 +20,5 @@ aiohttp==3.13.5
 aioresponses==0.7.8
 
 # Linting and formatting
-ruff==0.15.13
+ruff==0.15.14
 mypy==2.1.0
