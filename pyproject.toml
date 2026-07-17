@@ -22,9 +22,9 @@ dependencies = [
 dev = [
     "pytest>=8.2.0",
     "pytest-aiohttp>=1.1.0",
-    "pytest-homeassistant-custom-component==0.13.316",
+    "pytest-homeassistant-custom-component==0.13.346",
     "pytest-cov>=7.1.0",
-    "aioresponses>=0.7.8",
+    "aioresponses-ng>=0.8.2",
     "ruff>=0.15.10",
     "mypy>=1.5.0",
 ]
