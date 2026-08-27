@@ -233,7 +233,7 @@ async def test_read_device_info_with_failure(hass: HomeAssistant) -> None:
 
 
 async def test_probe_phantom_heat_circuits_filtered(hass: HomeAssistant) -> None:
-    """Test that phantom heat circuits (flow_set_temp == 0) are filtered out."""
+    """Test that phantom heat circuits (return_temp == 0) are filtered out."""
 
     # Helper to generate heat circuit signals
     def get_hc_signals(hc_num: int) -> list[str]:
@@ -265,20 +265,23 @@ async def test_probe_phantom_heat_circuits_filtered(hass: HomeAssistant) -> None
             # Default value for most signals
             value = 1.0
 
-            # HC0: real circuit with non-zero flow_set_temp
+            # HC0: real circuit with non-zero return_temp, but in Standby
+            # (flow_set_temp == 0, which must not be mistaken for phantom)
             if key == "hc0_flow_set_temp":
+                value = 0.0
+            elif key == "hc0_return_temp":
                 value = 29.2
             elif key and key.startswith("hc0_"):
                 value = 21.5 if "temp" in key else 1.0
 
-            # HC1: real circuit with non-zero flow_set_temp
-            elif key == "hc1_flow_set_temp":
+            # HC1: real circuit with non-zero return_temp
+            elif key == "hc1_return_temp":
                 value = 27.0
             elif key and key.startswith("hc1_"):
                 value = 20.0 if "temp" in key else 1.0
 
-            # HC2: phantom circuit with zero flow_set_temp
-            elif key == "hc2_flow_set_temp" or (key and key.startswith("hc2_")):
+            # HC2: phantom circuit with zero return_temp
+            elif key == "hc2_return_temp" or (key and key.startswith("hc2_")):
                 value = 0.0
 
             if key:
@@ -294,15 +297,16 @@ async def test_probe_phantom_heat_circuits_filtered(hass: HomeAssistant) -> None
 
         available = await client.async_probe_available_keys()
 
-        # Verify hc2_flow_set_temp was probed with value 0
-        assert "hc2_flow_set_temp" in probed_values
-        assert probed_values["hc2_flow_set_temp"] == 0.0
+        # Verify hc2_return_temp was probed with value 0
+        assert "hc2_return_temp" in probed_values
+        assert probed_values["hc2_return_temp"] == 0.0
 
-        # Verify hc0_flow_set_temp and hc1_flow_set_temp were probed with non-zero
-        assert probed_values.get("hc0_flow_set_temp") == 29.2
-        assert probed_values.get("hc1_flow_set_temp") == 27.0
+        # Verify hc0_return_temp and hc1_return_temp were probed with non-zero
+        assert probed_values.get("hc0_return_temp") == 29.2
+        assert probed_values.get("hc1_return_temp") == 27.0
 
-        # HC0 and HC1 should be available (non-zero flow_set_temp)
+        # HC0 and HC1 should be available (non-zero return_temp), even though
+        # HC0's flow_set_temp is 0 (Standby)
         hc0_signals = get_hc_signals(0)
         hc1_signals = get_hc_signals(1)
         for sig in hc0_signals:
@@ -310,21 +314,21 @@ async def test_probe_phantom_heat_circuits_filtered(hass: HomeAssistant) -> None
         for sig in hc1_signals:
             assert sig in available, f"Expected {sig} to be available"
 
-        # HC2 should be filtered out (flow_set_temp == 0)
+        # HC2 should be filtered out (return_temp == 0)
         hc2_signals = get_hc_signals(2)
         for sig in hc2_signals:
             assert sig not in available, f"Expected {sig} to be filtered out"
 
 
-async def test_probe_keeps_heat_circuit_when_flow_set_temp_missing(hass: HomeAssistant) -> None:
-    """Test that missing flow_set_temp does not hide an otherwise available circuit."""
+async def test_probe_keeps_heat_circuit_when_return_temp_missing(hass: HomeAssistant) -> None:
+    """Test that missing return_temp does not hide an otherwise available circuit."""
     with aioresponses() as m:
 
         def callback(url: str, **kwargs: Any) -> CallbackResult:
             request_data = kwargs.get("json")
             signal_name = request_data[0]["name"] if request_data else ""
             key = next((k for k, v in SIGNAL_MAP.items() if v == signal_name), None)
-            if key == "hc0_flow_set_temp":
+            if key == "hc0_return_temp":
                 return CallbackResult(status=500)
             if key and key.startswith("hc0_"):
                 return CallbackResult(payload=[{"name": signal_name, "value": "1"}])
@@ -339,7 +343,7 @@ async def test_probe_keeps_heat_circuit_when_flow_set_temp_missing(hass: HomeAss
 
         assert "hc0_mode" in available
         assert "hc0_room_temp" in available
-        assert "hc0_flow_set_temp" not in available
+        assert "hc0_return_temp" not in available
 
 
 async def test_read_values_invalid_json(hass: HomeAssistant) -> None:

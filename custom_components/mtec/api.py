@@ -83,8 +83,11 @@ class MtecApiClient:
         The M-TEC API returns HTTP 500 if any requested signal doesn't exist,
         so we must probe individually for signals that may not be present.
 
-        Additionally, heating circuits that return flow_set_temp == 0 are
-        considered phantom circuits and are filtered out.
+        Additionally, heating circuits that return return_temp == 0 are
+        considered phantom circuits and are filtered out. return_temp is a
+        physical sensor reading that stays non-zero from residual loop heat
+        regardless of operating mode, unlike flow_set_temp which is 0
+        whenever a circuit is simply in Standby.
         """
         if self._available_keys is not None:
             return self._available_keys
@@ -120,14 +123,14 @@ class MtecApiClient:
         )
 
         available: set[str] = set()
-        hc_flow_set_temps: dict[str, float] = {}
+        hc_return_temps: dict[str, float] = {}
         for result in probe_results:
             if result is None:
                 continue
             key, value = result
             available.add(key)
-            if key.endswith("_flow_set_temp"):
-                hc_flow_set_temps[key] = value
+            if key.endswith("_return_temp"):
+                hc_return_temps[key] = value
 
         filtered_circuits: set[str] = set()
         unfiltered_circuits: set[str] = set()
@@ -135,8 +138,8 @@ class MtecApiClient:
             match = _HC_KEY_RE.match(key)
             if match:
                 hc_num = match.group(1)
-                flow_set_key = f"{hc_num}_flow_set_temp"
-                if flow_set_key in hc_flow_set_temps and hc_flow_set_temps[flow_set_key] == 0:
+                return_temp_key = f"{hc_num}_return_temp"
+                if return_temp_key in hc_return_temps and hc_return_temps[return_temp_key] == 0:
                     available.discard(key)
                     filtered_circuits.add(hc_num)
                 else:
