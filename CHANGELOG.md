@@ -5,6 +5,29 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.2.6] - 2026-09-19
+
+Adds HACS and hassfest validation, reconciles the aiohttp requirement, and guards against version drift between the manifest and pyproject.
+
+### Fixes
+
+- Sort the manifest keys so the integration passes hassfest validation
+
+### CI
+
+- Add hassfest and HACS validation workflows
+- Pin the lint tools to the versions under test
+- Reconcile the `aiohttp` requirement and drop the unused `dev` extra in favour of `requirements_test.txt`
+- Add a test that guards against version drift between the manifest and `pyproject.toml`
+
+### Dependencies
+
+- Bump ruff from 0.16.4 to 0.16.7
+
+### Documentation & Links
+
+- [README](https://github.com/fabianwimberger/homeassistant-mtec-http#readme)
+
 ## [v1.2.5] - 2026-08-27
 
 Fixes a heat circuit entity going permanently unavailable after a heat pump restart.
