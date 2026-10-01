@@ -22,7 +22,6 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up M-TEC select entities."""
     coordinator: MtecDataCoordinator = entry.runtime_data
     available = coordinator.client.available_keys
     async_add_entities(
@@ -49,7 +48,6 @@ class MtecSelect(MtecEntity, SelectEntity):
 
     @property
     def current_option(self) -> str | None:
-        """Return the current mode."""
         if self.coordinator.data is None:
             return None
         raw = self.coordinator.data.get(self.entity_description.mtec_key)
@@ -58,7 +56,6 @@ class MtecSelect(MtecEntity, SelectEntity):
         return self.entity_description.options_map.get(int(raw), None)
 
     async def async_select_option(self, option: str) -> None:
-        """Set the operating mode."""
         raw_value = self._reverse_map.get(option)
         if raw_value is None:
             _LOGGER.error("Unknown option %s for %s", option, self.entity_description.key)

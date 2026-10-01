@@ -22,7 +22,6 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up M-TEC number entities."""
     coordinator: MtecDataCoordinator = entry.runtime_data
     available = coordinator.client.available_keys
     async_add_entities(
@@ -47,14 +46,12 @@ class MtecNumber(MtecEntity, NumberEntity):
 
     @property
     def native_value(self) -> float | None:
-        """Return the current value."""
         if self.coordinator.data is None:
             return None
         value = self.coordinator.data.get(self.entity_description.mtec_key)
         return float(value) if isinstance(value, (int, float)) else None
 
     async def async_set_native_value(self, value: float) -> None:
-        """Set the value on the heat pump."""
         try:
             await self.coordinator.client.async_write_value(self.entity_description.mtec_key, value)
         except MtecApiError as err:

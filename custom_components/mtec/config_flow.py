@@ -44,21 +44,17 @@ class MtecConfigFlow(ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg]  # HA
 
     @staticmethod
     def async_get_options_flow(config_entry: ConfigEntry) -> MtecOptionsFlow:
-        """Get the options flow handler."""
         return MtecOptionsFlow()
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        """Handle the initial step."""
         errors: dict[str, str] = {}
 
         if user_input is not None:
             host = user_input[CONF_HOST]
 
-            # Check for duplicate entries
             await self.async_set_unique_id(host)
             self._abort_if_unique_id_configured()
 
-            # Test the connection
             session = async_get_clientsession(self.hass)
             client = MtecApiClient(host, session)
 
@@ -109,7 +105,6 @@ class MtecOptionsFlow(OptionsFlow):
     """Handle options for M-TEC."""
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        """Manage the scan interval option."""
         if user_input is not None:
             return self.async_create_entry(data=user_input)
 
