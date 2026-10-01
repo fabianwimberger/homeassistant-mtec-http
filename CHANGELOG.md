@@ -5,6 +5,15 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.2.7] - 2026-10-01
+
+Removes redundant comments and docstrings while retaining explanations of heat pump behavior.
+
+### Documentation & Links
+
+- [README](https://github.com/fabianwimberger/homeassistant-mtec-http#readme)
+- [Full changelog](https://github.com/fabianwimberger/homeassistant-mtec-http/compare/v1.2.6...v1.2.7)
+
 ## [v1.2.6] - 2026-09-19
 
 Adds HACS and hassfest validation, reconciles the aiohttp requirement, and guards against version drift between the manifest and pyproject.
