@@ -28,14 +28,12 @@ from .entity import MtecEntity
 
 _LOGGER = logging.getLogger(__name__)
 
-# Preset mode constants
 PRESET_NONE = "none"
 PRESET_DAY = "Day"
 PRESET_NIGHT = "Night"
 PRESET_VACATION = "Vacation"
 PRESET_PARTY = "Party"
 
-# Map M-TEC heat circuit modes to HVAC modes
 # Modbus doc: 0=Standby, 1=Timer, 2=Day, 3=Night, 4=Vacation, 5=Party, 8=Extern
 _MODE_TO_HVAC: dict[int, HVACMode] = {
     HeatCircuitMode.STANDBY: HVACMode.OFF,
@@ -47,14 +45,12 @@ _MODE_TO_HVAC: dict[int, HVACMode] = {
     HeatCircuitMode.EXTERN: HVACMode.AUTO,
 }
 
-# Map HVAC modes back to M-TEC modes
 _HVAC_TO_MODE: dict[HVACMode, int] = {
     HVACMode.OFF: HeatCircuitMode.STANDBY,
     HVACMode.AUTO: HeatCircuitMode.TIMER,
     HVACMode.HEAT: HeatCircuitMode.DAY,
 }
 
-# Map M-TEC mode to preset (for modes that are presets)
 _MODE_TO_PRESET: dict[int, str] = {
     HeatCircuitMode.STANDBY: PRESET_NONE,
     HeatCircuitMode.TIMER: PRESET_NONE,
@@ -65,7 +61,6 @@ _MODE_TO_PRESET: dict[int, str] = {
     HeatCircuitMode.EXTERN: PRESET_NONE,
 }
 
-# Map preset back to M-TEC mode
 _PRESET_TO_MODE: dict[str, int] = {
     PRESET_NONE: HeatCircuitMode.TIMER,
     PRESET_DAY: HeatCircuitMode.DAY,
@@ -93,7 +88,6 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up M-TEC climate entities."""
     coordinator: MtecDataCoordinator = entry.runtime_data
     available = coordinator.client.available_keys
     async_add_entities(
@@ -142,7 +136,6 @@ class MtecClimate(MtecEntity, ClimateEntity):
 
     @property
     def available(self) -> bool:
-        """Return True if entity is available."""
         if not super().available:
             return False
         if self.coordinator.data is None:
@@ -151,7 +144,6 @@ class MtecClimate(MtecEntity, ClimateEntity):
         return all(k in self.coordinator.data for k in essential)
 
     def _raw_mode(self) -> int | None:
-        """Return the raw M-TEC operating mode integer."""
         if self._optimistic_mode is not None:
             return int(self._optimistic_mode)
         if self.coordinator.data is None:
@@ -163,7 +155,6 @@ class MtecClimate(MtecEntity, ClimateEntity):
 
     @property
     def hvac_mode(self) -> HVACMode | None:
-        """Return the current HVAC mode."""
         raw = self._raw_mode()
         if raw is None:
             return None
@@ -171,7 +162,6 @@ class MtecClimate(MtecEntity, ClimateEntity):
 
     @property
     def current_temperature(self) -> float | None:
-        """Return the current room temperature."""
         if self.coordinator.data is None:
             return None
         value = self.coordinator.data.get(self._room_temp_key)
@@ -179,7 +169,6 @@ class MtecClimate(MtecEntity, ClimateEntity):
 
     @property
     def target_temperature(self) -> float | None:
-        """Return the target temperature."""
         if (
             self._optimistic_temp_key == self._room_set_temp_key
             and self._optimistic_temp_value is not None
@@ -192,14 +181,12 @@ class MtecClimate(MtecEntity, ClimateEntity):
 
     @property
     def preset_mode(self) -> str | None:
-        """Return the current preset mode."""
         raw = self._raw_mode()
         if raw is None:
             return None
         return _MODE_TO_PRESET.get(raw, PRESET_NONE)
 
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
-        """Set the HVAC mode."""
         mtec_mode = _HVAC_TO_MODE.get(hvac_mode)
         if mtec_mode is None:
             _LOGGER.error("Unsupported HVAC mode: %s", hvac_mode)
@@ -227,7 +214,6 @@ class MtecClimate(MtecEntity, ClimateEntity):
         await self.async_set_hvac_mode(HVACMode.OFF)
 
     async def async_set_temperature(self, **kwargs: Any) -> None:
-        """Set the target temperature."""
         temp = kwargs.get(ATTR_TEMPERATURE)
         if temp is None:
             return
@@ -251,7 +237,6 @@ class MtecClimate(MtecEntity, ClimateEntity):
         self._optimistic_temp_value = None
 
     async def async_set_preset_mode(self, preset_mode: str) -> None:
-        """Set the preset mode."""
         mtec_mode = _PRESET_TO_MODE.get(preset_mode)
         if mtec_mode is None:
             _LOGGER.error("Unknown preset: %s", preset_mode)

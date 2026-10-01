@@ -32,7 +32,6 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up M-TEC sensors."""
     coordinator: MtecDataCoordinator = entry.runtime_data
     available = coordinator.client.available_keys
     async_add_entities(
@@ -58,7 +57,6 @@ class MtecSensor(MtecEntity, SensorEntity):
 
     @property
     def native_value(self) -> float | int | str | None:
-        """Return the sensor value."""
         if self.coordinator.data is None:
             return None
         raw = self.coordinator.data.get(self.entity_description.mtec_key)

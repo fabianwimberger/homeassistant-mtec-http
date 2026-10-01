@@ -27,7 +27,6 @@ type MtecConfigEntry = ConfigEntry[MtecDataCoordinator]
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: MtecConfigEntry) -> bool:
-    """Set up M-TEC Heat Pump from a config entry."""
     host = entry.data[CONF_HOST]
     scan_interval = entry.options.get(
         CONF_SCAN_INTERVAL,
@@ -37,7 +36,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: MtecConfigEntry) -> bool
     session = async_get_clientsession(hass)
     client = MtecApiClient(host, session)
 
-    # Probe which signals are available on this unit
     await client.async_probe_available_keys()
 
     # Read device info (firmware, serial) once
@@ -61,5 +59,4 @@ async def _async_update_listener(hass: HomeAssistant, entry: MtecConfigEntry) ->
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: MtecConfigEntry) -> bool:
-    """Unload a config entry."""
     return bool(await hass.config_entries.async_unload_platforms(entry, PLATFORMS))

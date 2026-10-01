@@ -17,7 +17,6 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up M-TEC binary sensors."""
     coordinator: MtecDataCoordinator = entry.runtime_data
     available = coordinator.client.available_keys
     async_add_entities(

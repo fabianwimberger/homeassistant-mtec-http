@@ -34,7 +34,6 @@ class MtecDataCoordinator(DataUpdateCoordinator[dict[str, float | int]]):
         self.device_info_data = device_info or {}
 
     async def _async_update_data(self) -> dict[str, float | int]:
-        """Fetch data from the heat pump."""
         try:
             return await self.client.async_read_values()
         except MtecApiError as err:
