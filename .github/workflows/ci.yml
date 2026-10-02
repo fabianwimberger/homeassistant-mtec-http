@@ -24,7 +24,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install linting tools
-        run: pip install ruff==0.16.6 mypy==2.3.1
+        run: pip install $(grep -E '^(ruff|mypy)==' requirements_test.txt)
 
       - name: Lint with ruff
         run: ruff check custom_components/mtec tests/
