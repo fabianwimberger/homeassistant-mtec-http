@@ -8,6 +8,14 @@
 
 ## Conventions
 
+The pinned test environment requires Python 3.14.2 or later.
+
+```bash
+python -m venv .venv
+.venv/bin/python -m pip install -e '.[dev]'
+.venv/bin/python -m pytest
+```
+
 - Prefix commits semantically (`feat:`, `fix:`, `docs:`, `ci:`, `deps:`).
 - One logical change per PR.
 - Make sure CI is green before requesting review.
