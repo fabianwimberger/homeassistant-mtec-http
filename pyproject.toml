@@ -21,7 +21,7 @@ dependencies = [
 [project.optional-dependencies]
 lint = [
     "ruff==0.16.9",
-    "mypy==2.3.1",
+    "mypy==2.4.0",
 ]
 dev = [
     "homeassistant-mtec-http[lint]",
