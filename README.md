@@ -17,9 +17,9 @@ M-TEC heat pumps expose a local HTTP API, but there is no native Home Assistant 
 - **70+ entities** — sensors, binary sensors, numbers, selects, and climate thermostats
 - **Auto-discovery** — probes available signals at startup (units vary by configuration)
 - **Climate control** — thermostat UI for heating circuits with HVAC modes and presets
-- **Energy dashboard** — heating and electrical energy sensors with `total_increasing` state class
+- **Energy dashboard** — total heating and electrical energy sensors with `total_increasing` state class; add them under **Settings > Dashboards > Energy**
 - **Real-time updates** — configurable polling interval (5-300 seconds)
-- **Diagnostics** — built-in HA diagnostics export for troubleshooting
+- **Diagnostics** — **Download diagnostics** on the integration page dumps the configuration, probed signals, and current values
 - **Multi-language** — English and German translations included
 
 ## Quick Start
@@ -59,67 +59,15 @@ The integration validates the connection by reading the outdoor temperature befo
 Startup → Probe available signals → Read device info → Create entities → Poll for updates
 ```
 
-The M-TEC API returns HTTP 500 if any requested signal doesn't exist on the unit. At startup, the integration probes each signal individually to determine which entities to create. This handles different heat pump configurations without manual configuration.
+The M-TEC API returns HTTP 500 if any requested signal doesn't exist on the unit. At startup, the integration probes each signal individually to determine which entities to create. This handles different heat pump configurations without manual setup.
+
+- Communicates via HTTP POST to `http://<host>/var/readWriteVars`
+- All entities share a single HA device ("M-TEC Heat Pump") that shows firmware version and serial number
+- The API covers up to 8 heating circuits, 4 hot water tanks, and 4 heat pumps; HC0/HC1 and heatpump[0] are implemented
 
 ## Entities
 
-### Climate (thermostat UI)
-
-| Entity | Description |
-|--------|-------------|
-| HC0 heating circuit | Heating circuit 0 thermostat (current/target temp, mode) |
-| HC1 heating circuit | Heating circuit 1 thermostat (current/target temp, mode) |
-
-HVAC modes: Off, Auto (Timer), Heat (Day). Presets: Day, Night, Vacation, Party.
-
-### Sensors
-
-| Entity | Unit | Description |
-|--------|------|-------------|
-| Outdoor temperature | °C | Outside air temperature |
-| Heating power | kW | Current heating output |
-| Electrical power | W | Current electrical consumption |
-| Heat pump state | — | Standby/Pre-Run/Heating/Defrost/Cooling/Post-Run/Safety Shutdown/Error |
-| COP | — | Coefficient of performance |
-| Total heating energy | kWh | Accumulated heating energy (energy dashboard) |
-| Total electrical energy | kWh | Accumulated electrical energy (energy dashboard) |
-| Operating hours | h | Total compressor hours |
-| Vaporizer / condenser temp | °C | Refrigerant circuit temperatures |
-| Heat flow / return temp | °C | Supply and return temperatures |
-| Source in / out temp | °C | Source (ground/air) temperatures |
-| Compressor in / out temp | °C | Compressor suction/discharge |
-| Low / high pressure | bar | Refrigerant pressures |
-| Superheat actual / setpoint | °C | Superheat control |
-| Circulation pump / compressor / fan | % | Actuator speeds |
-| Mass flow | kg/h | Refrigerant mass flow rate |
-| Buffer tank top / mid / set temp | °C | Buffer tank sensors |
-| Hot water top / circ temp | °C | Hot water tank sensors |
-| HC0/HC1 room temp / set temp | °C | Room temperatures per circuit |
-| Solar collector temp | °C | Solar thermal collector |
-| PV meter power | W | PV excess energy from meter |
-| Alarm 1-5 | — | Pending alarm IDs (0 = no alarm) |
-
-See the full entity list in the [documentation](https://github.com/fabianwimberger/homeassistant-mtec-http).
-
-### Binary Sensors
-
-Buffer tank heat/cool request, hot water heat request/pump, HC0/HC1 pump, PV excess energy, external heat source, screed drying.
-
-### Numbers (adjustable)
-
-Hot water target temperature, HC0/HC1 day/night/offset temperatures.
-
-### Selects (mode switches)
-
-System operating mode, hot water mode, HC0/HC1 operating mode, SG Ready mode.
-
-## Energy Dashboard
-
-The **Total heating energy** and **Total electrical energy** sensors are compatible with the Home Assistant energy dashboard. Add them under **Settings > Dashboards > Energy**.
-
-## Diagnostics
-
-The integration supports Home Assistant's built-in diagnostics export. Go to the integration page and click **Download diagnostics** to get a JSON dump of the current configuration and sensor values.
+Two climate entities (HC0/HC1 thermostats with Off, Auto and Heat modes and Day, Night, Vacation and Party presets), sensors for temperatures, pressures, power and energy, plus binary sensors, numbers and selects for the adjustable values. Only signals the unit reports are created. The list is in [docs/entities.md](docs/entities.md).
 
 ## Configuration
 
@@ -128,35 +76,10 @@ The integration supports Home Assistant's built-in diagnostics export. Go to the
 - **Host**: Use the "Reconfigure" option on the integration card to change the IP address
 - **Scan interval**: Use the "Configure" option to adjust the polling interval at runtime
 
-## Device Info
-
-The device card shows:
-- Manufacturer: M-TEC
-- Firmware version (read from the heat pump)
-- Serial number (read from the heat pump)
-
-## Technical Details
-
-- Communicates via HTTP POST to `http://<host>/var/readWriteVars`
-- All entities share a single HA device ("M-TEC Heat Pump")
-- Entities report as unavailable when the heat pump is unreachable
-- Supports up to 8 heating circuits, 4 hot water tanks, and 4 heat pumps in the Modbus spec (currently HC0/HC1 and heatpump[0] are implemented)
-
 ## Troubleshooting
 
-**No entities appearing:**
-- Verify the heat pump IP address is correct
-- Check that the heat pump web interface is accessible
-- Download diagnostics to see which signals were probed
+If entities are missing or unavailable, check that the heat pump's web interface is reachable from Home Assistant, then download diagnostics to see which signals were probed. Signals the unit does not support are not created.
 
-**Entities showing as unavailable:**
-- Check network connectivity to the heat pump
-- Some entities may not be available on your specific unit configuration
-
-## License & Disclaimer
+## License
 
 MIT License — see [LICENSE](LICENSE) file.
-
-### Third-Party Trademarks
-
-This project uses the "M-TEC" name and logo to identify the compatible heat pump systems. "M-TEC" is a trademark of M-TEC or mtec-systems. This project is an independent, community-created integration and is **not affiliated with, endorsed by, or sponsored by M-TEC or mtec-systems**. Use of the M-TEC trademark is for identification and compatibility purposes only.
