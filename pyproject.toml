@@ -30,7 +30,7 @@ dev = [
     "pytest-cov==7.1.0",
     "pytest-homeassistant-custom-component==0.13.356",
     "homeassistant==2026.8.2",
-    "aiohttp==3.14.3",
+    "aiohttp==3.14.5",
     # The maintained fork retains the aioresponses import used by the tests.
     "aioresponses-ng==0.8.2",
 ]
