@@ -23,3 +23,6 @@ updates:
     labels:
       - "dependencies"
       - "python"
+    ignore:
+      # pytest-homeassistant-custom-component pins an exact pytest version, so a bump cannot resolve.
+      - dependency-name: "pytest"
