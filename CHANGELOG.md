@@ -5,6 +5,23 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.2.9] - 2026-11-06
+
+Raises the aiohttp floor and refreshes the test harness.
+
+### Fixes
+
+- The aiohttp floor moves to 3.14.4, the first release without known advisories. Home Assistant ships its own aiohttp at runtime, so this only stops scanners flagging the old floor.
+
+### Dependencies
+
+- Home Assistant test harness and ruff refreshed; ruff 0.17.2 → 0.17.3 and mypy 2.4.0 → 2.4.1.
+- pytest updates are ignored in Dependabot, because `pytest-homeassistant-custom-component` pins the version.
+
+### Documentation & Links
+
+- [README](https://github.com/fabianwimberger/homeassistant-mtec-http#readme)
+
 ## [v1.2.8] - 2026-10-03
 
 Provides a single development installation and updates coverage publishing.
