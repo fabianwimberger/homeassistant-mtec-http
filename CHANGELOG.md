@@ -162,7 +162,7 @@ M-TEC Heat Pump now discovers available signals faster and avoids hiding heating
 
 ## [v1.2.0] - 2026-05-09
 
-Robustness improvements for MTEC heat pump API client.
+Hardened the MTEC heat pump API client.
 
 ### Fixes
 - Catch JSON decode errors in API response parsing
