@@ -67,3 +67,18 @@ jobs:
           files: ./coverage.xml
           use_oidc: true
           fail_ci_if_error: true
+
+  ci:
+    name: ci
+    if: always()
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require every job to pass
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          case " $RESULTS " in
+            *" failure "*|*" cancelled "*) echo "A required job did not pass: $RESULTS"; exit 1 ;;
+          esac
